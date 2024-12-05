@@ -61,6 +61,6 @@ variable "access_policy" {
 variable "keyvault_objects" {
   type = map(object({
     ## fill this to create a secret
-    value        = optional(string)
+    value = optional(string)
   }))
 }
