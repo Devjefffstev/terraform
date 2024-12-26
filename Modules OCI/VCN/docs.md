@@ -32,5 +32,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_subnets_properties"></a> [subnets\_properties](#output\_subnets\_properties) | n/a |
-| <a name="output_vcn_properties"></a> [vcn\_properties](#output\_vcn\_properties) | n/a |
+| <a name="output_subnets_cidr_block"></a> [subnets\_cidr\_block](#output\_subnets\_cidr\_block) | Export the Subnets cidr\_block |
+| <a name="output_subnets_properties"></a> [subnets\_properties](#output\_subnets\_properties) | Export the Subnets properties |
+| <a name="output_vcn_cidr_amount"></a> [vcn\_cidr\_amount](#output\_vcn\_cidr\_amount) | Export the Subnets cidr\_block |
+| <a name="output_vcn_properties"></a> [vcn\_properties](#output\_vcn\_properties) | Export the VCN properties |
