@@ -2,7 +2,7 @@ resource "oci_core_vcn" "main" {
   compartment_id = var.compartment_id
   cidr_blocks    = var.cidr_blocks
   display_name   = var.display_name
-  
+
 }
 
 resource "oci_core_subnet" "main" {
@@ -14,4 +14,9 @@ resource "oci_core_subnet" "main" {
   dns_label      = try(each.value.dns_label, null)
 }
 
-
+resource "oci_core_internet_gateway" "main" {
+  #Required
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.main.id
+  display_name   = "igw-${var.display_name}"
+}
