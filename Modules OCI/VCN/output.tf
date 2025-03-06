@@ -14,3 +14,8 @@ output "vcn_cidr_amount" {
   value       = length(oci_core_vcn.main.cidr_block)
   description = "Export the Subnets cidr_block"
 }
+output "internet_gateway_properties" {
+  value       = oci_core_internet_gateway.main
+  description = "Export the Internet Gateway properties"
+  
+}
