@@ -18,7 +18,7 @@ terraform {
 }
 
 ## Example of how to use for_each in a module to create multiple resource groups overiting different properties
-## In this case, we are overriding the location of the resource group if the name contains "db"
+## In this case, we are overwriting the location of the resource group if the name contains "db"
 locals {
   resource_group_prop_mod = {
     for rg_name, props in var.resource_group_prop_mod : rg_name => merge(props, {
@@ -42,7 +42,7 @@ module "resource_group_example_for_each_inside_module" {
 module "resource_group_example_single_resource_group" {
   for_each                = local.resource_group_prop_mod_sing
   source                  = "../../../../modules/azure/resource-group-single"
-  rg_prop_name_single     = each.key
+  rg_prop_name_single     = each.value.name
   rg_prop_location_single = each.value.location
   rg_prop_tags_single     = try(each.value.tags, null)
 }
