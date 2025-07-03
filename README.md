@@ -82,8 +82,9 @@ terraform/
 │       ├── network/
 │       ├── compute/
 │       └── storage/
-├── examples/
-│   ├── basic/
+├── howtouse/
+│   ├── azure 
+|   |   ├── resource-group-example/
 │   ├── advanced/
 │   └── real-world/
 ├── docs/

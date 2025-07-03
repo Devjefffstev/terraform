@@ -34,14 +34,14 @@ locals {
 }
 ## This module creates multiples resource groups using for_each in the resource block definition inside the module
 module "resource_group_example_for_each_inside_module" {
-  source              = "../../../../modules/azure/resource-group"
+  source              = "../../../modules/azure/resource-group"
   resource_group_prop = local.resource_group_prop_mod
 }
 
 ## This module creates multiples resource groups using for_each in the module block definition
 module "resource_group_example_single_resource_group" {
   for_each                = local.resource_group_prop_mod_sing
-  source                  = "../../../../modules/azure/resource-group-single"
+  source                  = "../../../modules/azure/resource-group-single"
   rg_prop_name_single     = each.value.name
   rg_prop_location_single = each.value.location
   rg_prop_tags_single     = try(each.value.tags, null)
