@@ -1,6 +1,6 @@
 <!-- BEGIN_TF_DOCS -->
 ```bash 
-By setting the ARM_SUBSCRIPTION_ID environment variable, Terraform will automatically use it for the subscription_id in the azurerm provider block. ||  export ARM_SUBSCRIPTION_ID='xxxxx-xxxxx-xxxxx-xxxxx-xxxxx' 
+By setting the TF_VAR_subscription_id environment variable, Terraform will automatically use it for the subscription_id in the azurerm provider block. ||  export TF_VAR_subscription_id='xxxxx-xxxxx-xxxxx-xxxxx-xxxxx' 
 ````
 
 ## Requirements
