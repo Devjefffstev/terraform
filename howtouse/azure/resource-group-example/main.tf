@@ -17,7 +17,7 @@ terraform {
   }
 }
 
-## Example of how to use for_each in a module to create multiple resource groups overiting different properties
+## Example of how to use for_each in a module to create multiple resource groups ovewriting different properties
 ## In this case, we are overwriting the location of the resource group if the name contains "db"
 locals {
   resource_group_prop_mod = {
@@ -46,4 +46,3 @@ module "resource_group_example_single_resource_group" {
   rg_prop_location_single = each.value.location
   rg_prop_tags_single     = try(each.value.tags, null)
 }
-
