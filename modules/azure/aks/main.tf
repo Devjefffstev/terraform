@@ -3,6 +3,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = var.dns_prefix
+  node_resource_group = "managed-aks-rg-${var.name}"
   default_node_pool {
     name       = var.default_node_pool.name
     node_count = var.default_node_pool.node_count
