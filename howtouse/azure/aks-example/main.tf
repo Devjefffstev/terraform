@@ -42,8 +42,6 @@ module "aks_poc" {
   }
 
   identity = {
-    type         = var.identity.type
-    # identity_ids = ["/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityValue"]
-    
+    type         = var.identity.type    
   }
 }
