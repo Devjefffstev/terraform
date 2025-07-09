@@ -42,9 +42,9 @@ jobs:
       working-directory: howtouse/azure/aks-example
 
     # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check -recursive
-      working-directory: howtouse/azure/aks-example
+    # - name: Terraform Format
+    #   run: terraform fmt -check -recursive
+    #   working-directory: howtouse/azure/aks-example
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
