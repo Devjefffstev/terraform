@@ -48,5 +48,5 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=terraform.tfvars
+      run: terraform plan -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
       working-directory: howtouse/azure/aks-example
