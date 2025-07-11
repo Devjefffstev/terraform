@@ -1,0 +1,33 @@
+resource "aws_eks_cluster" "main" {
+  name = var.eks_cluster_name
+bootstrap_self_managed_addons = var.bootstrapSelfManagedAddons
+  access_config {
+    authentication_mode                         = var.access_config.authentication_mode
+    bootstrap_cluster_creator_admin_permissions = var.access_config.bootstrap_cluster_creator_admin_permissions
+  }
+
+  role_arn = var.role_arn
+  version  = var.version_eks
+
+  vpc_config {
+    subnet_ids              = var.vpc_config.subnet_ids
+    endpoint_public_access  = var.vpc_config.endpoint_public_access
+    endpoint_private_access = var.vpc_config.endpoint_private_access
+
+  }
+  compute_config {
+    enabled       = try(var.compute_config.enable, true)
+    node_pools    = var.compute_config.node_pools
+    node_role_arn = var.compute_config.node_role_arn
+  }
+  kubernetes_network_config {
+    elastic_load_balancing {
+      enabled = try(var.kubernetes_network_config.elastic_load_balancing.enabled, true)
+    }
+  }
+  storage_config {
+    block_storage {
+      enabled = var.storage_config.block_storage.enabled
+    }
+  }
+}
