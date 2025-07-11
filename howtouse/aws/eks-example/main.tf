@@ -1,7 +1,7 @@
 module "aws_iam" {
   source = "../../../modules/aws/iam"
   aws_iam_role = {
-    eks_role_and_policy = {
+    eks_cluster_example = {
       assume_role_policy = jsonencode({
         Version = "2012-10-17"
         Statement = [
@@ -37,7 +37,7 @@ module "aws_iam" {
         }
       ]
     }
-    eks_node_role_and_policy = {
+    eks_auto_node_example = {
       assume_role_policy = jsonencode({
         Version = "2012-10-17"
         Statement = [
@@ -82,6 +82,13 @@ module "aws_vpc" {
       tags = {
         Name = "eks-example-subnet-2"
       }
+    },
+    {
+      cidr_block        = "10.0.2.0/24"
+      availability_zone = "us-east-1f"
+      tags = {
+        Name = "eks-example-subnet-3"
+      }
     }
   ]
 }
@@ -99,7 +106,7 @@ module "eks_example" {
     authentication_mode = "API"
     # bootstrap_cluster_creator_admin_permissions = false
   }
-  role_arn = module.aws_iam.aws_iam_role_properties.eks_role_and_policy.arn
+  role_arn = module.aws_iam.aws_iam_role_properties.eks_cluster_example.arn
   vpc_config = {
   subnet_ids = local.subnets_created_ids }
   kubernetes_network_config = {
@@ -111,7 +118,7 @@ module "eks_example" {
     node_pools = [
       "general-purpose",
     ]
-    node_role_arn = module.aws_iam.aws_iam_role_properties.eks_node_role_and_policy.arn
+    node_role_arn = module.aws_iam.aws_iam_role_properties.eks_auto_node_example.arn
   }
   storage_config = {
     block_storage = {
@@ -119,4 +126,22 @@ module "eks_example" {
     }
   }
   depends_on = [module.aws_iam]
+}
+
+
+## In order to connect to the EKS cluster and see the objects, you need to create a eks_access_entry for your user.
+resource "aws_eks_access_entry" "example" {
+  cluster_name  = module.eks_example.eks_properties.name
+  principal_arn = "arn:aws:iam::768312754627:user/jeffsoto"
+  type          = "STANDARD"
+
+}
+resource "aws_eks_access_policy_association" "example" {
+  cluster_name  = module.eks_example.eks_properties.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+  principal_arn = "arn:aws:iam::768312754627:user/jeffsoto"
+  access_scope {
+    type       = "cluster"
+    
+  }
 }
