@@ -31,3 +31,21 @@ bootstrap_self_managed_addons = var.bootstrapSelfManagedAddons
     }
   }
 }
+resource "aws_eks_node_group" "example" {
+  cluster_name    = var.eks_cluster_name
+  node_group_name = "node_group_default_${var.eks_cluster_name}"
+  node_role_arn   = var.compute_config.node_role_arn
+  subnet_ids      = var.vpc_config.subnet_ids
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+
+}

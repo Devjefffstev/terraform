@@ -57,7 +57,11 @@ module "aws_iam" {
         },
         {
           policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy" # Allows EKS to communicate with other services
-      }]
+        },
+        {
+          policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" # Allows EKS to manage networking for the worker nodes
+        }
+      ]
     }
   }
 
@@ -137,11 +141,32 @@ resource "aws_eks_access_entry" "example" {
 
 }
 resource "aws_eks_access_policy_association" "example" {
-  cluster_name  = module.eks_example.eks_properties.name
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-  principal_arn = "arn:aws:iam::768312754627:user/jeffsoto"
+  for_each = {
+    "policy1" = {
+      cluster_name  = module.eks_example.eks_properties.name
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+      principal_arn = aws_eks_access_entry.example.principal_arn
+    }
+    "policy2" = {
+      cluster_name  = module.eks_example.eks_properties.name
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+      principal_arn = aws_eks_access_entry.example.principal_arn
+    }
+    "policy3" = {
+      cluster_name  = module.eks_example.eks_properties.name
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      principal_arn = aws_eks_access_entry.example.principal_arn
+    }
+    "policy4" = {
+      cluster_name  = module.eks_example.eks_properties.name
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingClusterPolicy"
+      principal_arn = aws_eks_access_entry.example.principal_arn
+    }
+  }
+  cluster_name  = each.value.cluster_name
+  policy_arn    = each.value.policy_arn
+  principal_arn = each.value.principal_arn
   access_scope {
-    type       = "cluster"
-    
+    type = "cluster"
   }
 }
