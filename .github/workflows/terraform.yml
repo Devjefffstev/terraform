@@ -12,7 +12,7 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: Prod
+    environment: Subs_fran
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -41,19 +41,14 @@ jobs:
       run: terraform init
       working-directory: howtouse/azure/aks-example
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    # - name: Terraform Format
-    #   run: terraform fmt -check -recursive
-    #   working-directory: howtouse/azure/aks-example
-
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
       working-directory: howtouse/azure/aks-example
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
-    - name: Terraform Apply
-      # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      if: github.ref == 'refs/heads/workflow-terraform' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
-      working-directory: howtouse/azure/aks-example
+    # - name: Terraform Apply
+    #   # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    #   if: github.ref == 'refs/heads/workflow-terraform' && github.event_name == 'push'
+    #   run: terraform apply -auto-approve -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
+    #   working-directory: howtouse/azure/aks-example
