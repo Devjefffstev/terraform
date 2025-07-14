@@ -10,7 +10,7 @@ variable "bootstrapSelfManagedAddons" {
   description = "Flag to bootstrap self-managed addons"
   type        = bool
   default     = false
-  
+
 }
 variable "access_config" {
   description = "Access configuration for the EKS cluster"
@@ -34,13 +34,14 @@ variable "vpc_config" {
     subnet_ids              = list(string)
     endpoint_public_access  = optional(bool, true)
     endpoint_private_access = optional(bool, true)
+    public_access_cidrs     = optional(set(string), null)
   })
 }
 variable "compute_config" {
   description = "Access configuration for the EKS cluster"
   type = object({
-    enable = optional(bool, true)
-    node_pools = optional(list(string), null)
+    enable        = optional(bool, true)
+    node_pools    = optional(list(string), null)
     node_role_arn = optional(string, null)
   })
 }
@@ -51,7 +52,7 @@ variable "kubernetes_network_config" {
       enabled = optional(bool, true)
     })
   })
-  
+
 }
 variable "storage_config" {
   description = "Storage configuration for the EKS cluster"
@@ -59,5 +60,28 @@ variable "storage_config" {
     block_storage = object({
       enabled = optional(bool, true)
     })
-  })  
+  })
+}
+variable "aws_eks_node_group" {
+  description = "Configuration for the EKS node group"
+  type = object({
+    node_role_arn = string
+  })
+}
+variable "eks_addons" {
+  description = "List of EKS addons to be installed"
+  type = list(object({
+    addon_name    = string
+    version = optional(string, null)
+  }))
+  default = [{
+    addon_name = "vpc-cni"
+    }, {
+    addon_name = "coredns"
+    }, {
+    addon_name = "kube-proxy"
+    }, {
+    addon_name = "eks-pod-identity-agent"
+  }]
+
 }

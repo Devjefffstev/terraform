@@ -7,6 +7,6 @@ locals {
         index = index(prop.aws_iam_role_policy_attachment, ipa)
       }
     ]
-    ]) : "index-${irpa.index}-${irpa.policy_arn}" => irpa
+    ]) : "${irpa.role}-index-${irpa.index}-${irpa.policy_arn}" => irpa
   }
 }
