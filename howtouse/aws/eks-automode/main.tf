@@ -1,34 +1,27 @@
 module "aws_iam" {
-  source = "../../../modules/aws/iam"
+  source       = "../../../modules/aws/iam"
   aws_iam_role = local.this_aws_iam_role
 }
 
 module "aws_vpc" {
   source     = "../../../modules/aws/vpc"
   cidr_block = var.vpc_cidr_block
-  tags = var.tags
-  subnets = var.subnets
+  tags       = var.tags
+  subnets    = var.subnets
 }
 
 module "eks_example" {
   source           = "../../../modules/aws/eks"
   eks_cluster_name = "eks-cluster-opencost-cost"
-  access_config = {
-    authentication_mode = "API"
-    # bootstrap_cluster_creator_admin_permissions = false
-  }
-  role_arn = module.aws_iam.aws_iam_role_properties.eks_cluster_example.arn
-  vpc_config = {
-    subnet_ids              = local.subnets_created_ids
-    endpoint_private_access = true
-    endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"] # Allow public access from anywhere, adjust as needed
-  }
+  access_config    = var.access_config
+  role_arn         = module.aws_iam.aws_iam_role_properties.eks_cluster_example.arn
+  vpc_config = merge(var.vpc_config, {
+    subnet_ids = local.subnets_created_ids
+  })
   kubernetes_network_config = {
     elastic_load_balancing = {
       enabled = true
-    }
-  }
+  } }
   compute_config = {
     node_pools = [
       "general-purpose", "system"
@@ -40,13 +33,24 @@ module "eks_example" {
       enabled = true
     }
   }
-  aws_eks_node_group = {
-    node_role_arn = module.aws_iam.aws_iam_role_properties.eks_auto_node_example.arn
-  }
+  eks_node_group = local.eks_node_group
+
   depends_on = [module.aws_iam]
 }
 
-
+locals {
+  eks_node_group = {
+    for node_group_name, node_group_details in var.eks_node_group : node_group_name => merge(node_group_details, {
+      subnet_ids    = local.subnets_created_ids
+      node_role_arn = module.aws_iam.aws_iam_role_properties.eks_auto_node_for_nodes.arn
+      scaling_config = merge(node_group_details.scaling_config, {
+        desired_size = try(node_group_details.scaling_config.desired_size, 2)
+        max_size     = try(node_group_details.scaling_config.max_size, 3)
+        min_size     = try(node_group_details.scaling_config.min_size, 1)
+      })
+    })
+  }
+}
 ## In order to connect to the EKS cluster and see the objects, you need to create a eks_access_entry for your user.
 resource "aws_eks_access_entry" "example" {
   cluster_name  = module.eks_example.eks_properties.name

@@ -127,3 +127,57 @@ variable "subnets" {
 
   ]
 }
+variable "eks_cluster_name" {
+  description = "Name of the EKS cluster"
+  type        = string
+  default     = "eks-cluster-opencost-cost"
+}
+variable "access_config" {
+  description = "Access configuration for the EKS cluster"
+  type = object({
+    authentication_mode                         = string
+    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
+  })
+  default = {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
+  }
+}
+variable "vpc_config" {
+  description = "VPC configuration for the EKS cluster"
+  type = object({
+    endpoint_public_access  = bool
+    endpoint_private_access = bool
+    public_access_cidrs     = optional(list(string), [])
+  })
+  default = {
+    endpoint_public_access  = true
+    endpoint_private_access = true
+    public_access_cidrs     = ["0.0.0.0/0"] # Allow public access from anywhere, adjust as needed
+  }
+}
+variable "eks_node_group" {
+  type = map(object({
+
+    scaling_config = object({
+      desired_size = number
+      max_size     = number
+      min_size     = number
+    })
+    update_config = object({
+      max_unavailable = optional(number, 1)
+    })
+  }))
+  default = {
+    node_group_opencost = {
+      scaling_config = {
+        desired_size = 2
+        max_size     = 3
+        min_size     = 1
+      }
+      update_config = {
+        max_unavailable = 1
+      }
+    }
+  }
+}

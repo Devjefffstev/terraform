@@ -62,17 +62,11 @@ variable "storage_config" {
     })
   })
 }
-variable "aws_eks_node_group" {
-  description = "Configuration for the EKS node group"
-  type = object({
-    node_role_arn = string
-  })
-}
 variable "eks_addons" {
   description = "List of EKS addons to be installed"
   type = list(object({
-    addon_name    = string
-    version = optional(string, null)
+    addon_name = string
+    version    = optional(string, null)
   }))
   default = [{
     addon_name = "vpc-cni"
@@ -83,5 +77,20 @@ variable "eks_addons" {
     }, {
     addon_name = "eks-pod-identity-agent"
   }]
-
+}
+variable "eks_node_group" {
+  type = map(object({
+    node_role_arn = string
+    subnet_ids    = list(string)
+    scaling_config = object({
+      desired_size = number
+      max_size     = number
+      min_size     = number
+    })
+    update_config = object({
+      max_unavailable = optional(number, 1)
+    })
+  }))
+  nullable = true
+  default = null
 }

@@ -31,27 +31,29 @@ resource "aws_eks_cluster" "main" {
     }
   }
 }
-# resource "aws_eks_node_group" "example" {
-#   cluster_name    = var.eks_cluster_name
-#   node_group_name = "node_group_default_${var.eks_cluster_name}"
-#   node_role_arn   = var.aws_eks_node_group.node_role_arn
-#   subnet_ids      = var.vpc_config.subnet_ids
 
-#   scaling_config {
-#     desired_size = 1
-#     max_size     = 2
-#     min_size     = 1
-#   }
+resource "aws_eks_node_group" "main" {
+  for_each        = var.eks_node_group != null ? var.eks_node_group : {}
+  cluster_name    = var.eks_cluster_name
+  node_group_name = each.key
+  node_role_arn   = each.value.node_role_arn
+  subnet_ids      = each.value.subnet_ids
 
-#   update_config {
-#     max_unavailable = 1
-#   }
+  scaling_config {
+    desired_size = each.value.scaling_config.desired_size
+    max_size     = each.value.scaling_config.max_size
+    min_size     = each.value.scaling_config.min_size
+  }
 
-#   depends_on = [aws_eks_cluster.main]
-# }
+  update_config {
+    max_unavailable = each.value.update_config.max_unavailable
+  }
+
+  depends_on = [aws_eks_cluster.main]
+}
 
 resource "aws_eks_addon" "main" {
-  for_each = local.eks_addons
+  for_each     = local.eks_addons
   cluster_name = aws_eks_cluster.main.id
   addon_name   = each.value.addon_name
 }
