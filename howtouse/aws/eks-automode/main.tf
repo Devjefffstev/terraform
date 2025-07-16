@@ -7,7 +7,7 @@ module "aws_vpc" {
   source     = "../../../modules/aws/vpc"
   cidr_block = var.vpc_cidr_block
   tags       = var.tags
-  subnets    = var.subnets
+  subnets    = var.subnets  
 }
 
 module "eks_example" {

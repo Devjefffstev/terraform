@@ -65,18 +65,25 @@ variable "storage_config" {
 variable "eks_addons" {
   description = "List of EKS addons to be installed"
   type = list(object({
-    addon_name = string
-    version    = optional(string, null)
+    addon_name    = string
+    addon_version = optional(string, null)
   }))
   default = [{
     addon_name = "vpc-cni"
-    }, {
+    },
+    {
     addon_name = "coredns"
-    }, {
-    addon_name = "kube-proxy"
-    }, {
-    addon_name = "eks-pod-identity-agent"
-  }]
+    addon_version = "v1.12.2-eksbuild.4"
+    }, 
+    {
+      addon_name = "kube-proxy"
+      }, {
+      addon_name = "eks-pod-identity-agent"
+    },
+    # {
+    #   addon_name = "aws-ebs-csi-driver"
+    # }
+  ]
 }
 variable "eks_node_group" {
   type = map(object({
@@ -92,5 +99,5 @@ variable "eks_node_group" {
     })
   }))
   nullable = true
-  default = null
+  default  = null
 }

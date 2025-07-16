@@ -94,6 +94,11 @@ variable "subnets" {
     cidr_block              = string
     availability_zone       = string
     map_public_ip_on_launch = bool
+    routes = list(object({
+      cidr_block     = string
+      gateway_id     = optional(string, null)
+      nat_gateway_id = optional(string, null)
+    }))
     tags                    = map(string)
   }))
   default = [
@@ -105,6 +110,11 @@ variable "subnets" {
         Name                              = "eks-example-subnet-1"
         "kubernetes.io/role/internal-elb" = "1"
       }
+      routes = [
+        {
+          cidr_block = "0.0.0.0/0"
+        }
+      ]
     },
     {
       cidr_block              = "10.0.1.0/24"
@@ -114,6 +124,11 @@ variable "subnets" {
         Name                              = "eks-example-subnet-2"
         "kubernetes.io/role/internal-elb" = "1"
       }
+      routes = [
+        {
+          cidr_block = "0.0.0.0/0"
+        }
+      ]
     },
     {
       cidr_block              = "10.0.2.0/24"
@@ -123,10 +138,16 @@ variable "subnets" {
         Name                              = "eks-example-subnet-3"
         "kubernetes.io/role/internal-elb" = "1"
       }
+      routes = [
+        {
+          cidr_block = "0.0.0.0/0"
+        }
+      ]
     }
 
   ]
 }
+
 variable "eks_cluster_name" {
   description = "Name of the EKS cluster"
   type        = string

@@ -1,13 +1,11 @@
 variable "helm_releases" {
   description = "List of Helm releases to be managed"
-  type = list(object({
-    name       = string
+  type = map(object({    
     chart      = string
     version    = optional(string, null)
-    namespace  = optional(string, "default")
-    values     = optional(map(any), {})
-    depends_on = optional(list(string), [])
-  }))
-  default = []
-  
+    create_namespace = optional(bool, true)
+    repository = optional(string, null)
+    namespace  = optional(string, null)
+    values     = optional(list(string), null)
+  }))  
 }
