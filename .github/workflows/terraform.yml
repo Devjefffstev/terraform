@@ -12,8 +12,9 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: Subs_fran
-
+    # environment: Subs_fran
+    environment: Prod
+    
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
@@ -38,7 +39,7 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -backend-config="howtouse/azure/backend/backendmain.tf"
       working-directory: howtouse/azure/aks-example
 
     # Generates an execution plan for Terraform
@@ -47,8 +48,8 @@ jobs:
       working-directory: howtouse/azure/aks-example
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
-    - name: terraform apply
+    - name: terraform destroy
       # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       if: github.ref == 'refs/heads/workflow-terraform' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
+      run: terraform destroy -auto-approve -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
       working-directory: howtouse/azure/aks-example
