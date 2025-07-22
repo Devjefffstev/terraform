@@ -19,7 +19,7 @@ variable "this_aws_iam_role" {
     }))
   }))
   default = {
-    eks_cluster_example = {
+    eks_cluster_role = {
       assume_role_policy = "policies/cluster_role.json"
       aws_iam_role_policy_attachment = [
         {
@@ -42,7 +42,21 @@ variable "this_aws_iam_role" {
         }
       ]
     }
-    eks_auto_node_example = {
+    eks_auto_mode_node_pool = {
+      assume_role_policy = "policies/node_role.json"
+      aws_iam_role_policy_attachment = [
+        {
+          policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy"
+        },
+        {
+          policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly" # Allows EKS to communicate with other services
+        },
+        # {
+        #   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" # Allows EKS to manage networking for the worker nodes
+        # }
+      ]
+    }
+    eks_auto_mode_group_nodes = {
       assume_role_policy = "policies/node_role.json"
       aws_iam_role_policy_attachment = [
         {
@@ -56,18 +70,12 @@ variable "this_aws_iam_role" {
         }
       ]
     }
-    eks_auto_node_for_nodes = {
-      assume_role_policy = "policies/node_role.json"
+    eks_auto_mode_csi_driver = {
+      assume_role_policy = "policies/pod.json"
       aws_iam_role_policy_attachment = [
         {
-          policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-        },
-        {
-          policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" # Allows EKS to communicate with other services
-        },
-        {
-          policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" # Allows EKS to manage networking for the worker nodes
-        }
+          policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+        },      
       ]
     }
   }

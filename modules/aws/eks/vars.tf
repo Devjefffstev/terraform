@@ -44,6 +44,7 @@ variable "compute_config" {
     node_pools    = optional(list(string), null)
     node_role_arn = optional(string, null)
   })
+  default = null
 }
 variable "kubernetes_network_config" {
   description = "Kubernetes network configuration for the EKS cluster"
@@ -52,7 +53,7 @@ variable "kubernetes_network_config" {
       enabled = optional(bool, true)
     })
   })
-
+default = null
 }
 variable "storage_config" {
   description = "Storage configuration for the EKS cluster"
@@ -61,20 +62,27 @@ variable "storage_config" {
       enabled = optional(bool, true)
     })
   })
+  default = null
 }
 variable "eks_addons" {
   description = "List of EKS addons to be installed"
   type = list(object({
     addon_name    = string
     addon_version = optional(string, null)
+    resolve_conflicts_on_update = optional(string, "OVERWRITE")
+    resolve_conflicts_on_create = optional(string, "OVERWRITE")
+    pod_identity_association = optional(object({
+      role_arn        = string
+      service_account = string
+    }), null)
   }))
   default = [{
     addon_name = "vpc-cni"
     },
-    {
-    addon_name = "coredns"
-    addon_version = "v1.12.2-eksbuild.4"
-    }, 
+    # {
+    # addon_name = "coredns"
+    # addon_version = "v1.12.2-eksbuild.4"
+    # }, 
     {
       addon_name = "kube-proxy"
       }, {

@@ -35,3 +35,8 @@ provider "kubernetes" {
     }
 
   }
+
+  provider "random" {
+    # This provider is used for generating random values, such as passwords or names. 
+    
+  }
