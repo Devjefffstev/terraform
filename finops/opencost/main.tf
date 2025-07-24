@@ -19,6 +19,18 @@ module "helm_charts" {
       chart      = "prometheus"
       repository = "https://prometheus-community.github.io/helm-charts"
       namespace  = "prometheus-system"
+      #     extraScrapeConfigs: |
+      # - job_name: opencost
+      #   honor_labels: true
+      #   scrape_interval: 1m
+      #   scrape_timeout: 10s
+      #   metrics_path: /metrics
+      #   scheme: http
+      #   dns_sd_configs:
+      #   - names:
+      #     - opencost.opencost
+      #     type: 'A'
+      #     port: 9003
       values = [
         yamlencode({
           alertmanager = {
@@ -27,6 +39,19 @@ module "helm_charts" {
           prometheus-pushgateway = {
             enabled = false
           }
+          extraScrapeConfigs = <<-EOT
+            - job_name: opencost
+              honor_labels: true
+              scrape_interval: 1m
+              scrape_timeout: 10s
+              metrics_path: /metrics
+              scheme: http
+              dns_sd_configs:
+              - names:
+                - opencost.opencost
+                type: 'A'
+                port: 9003
+          EOT
         })
       ]
     }
@@ -35,7 +60,16 @@ module "helm_charts" {
       repository       = "https://opencost.github.io/opencost-helm-chart"
       namespace        = "opencost"
       create_namespace = true
-
+      values = [
+        yamlencode({
+          opencost = {
+            cloudIntegrationSecret = "cloud-costs"
+            cloudCost = {
+              enabled = true
+            }
+          }
+        })
+      ]
     }
     nginx-ingress-controller = {
       chart            = "ingress-nginx"
@@ -63,16 +97,16 @@ module "helm_charts" {
             type = "ClusterIP"
           }
           ingress = {
-            enabled = true
-            path    = "/"
+            enabled          = true
+            path             = "/"
             ingressClassName = "nginx"
-            hostname = "helloworld.opencost.cosmoinc.online" # Replace with your domain
-            hosts   = ["helloworld.opencost.cosmoinc.online"] # Replace with your domain
+            hostname         = "helloworld.opencost.cosmoinc.online"   # Replace with your domain
+            hosts            = ["helloworld.opencost.cosmoinc.online"] # Replace with your domain
           }
         })
       ]
     }
-    
+
   }
   depends_on = [kubernetes_storage_class_v1.main]
 }
@@ -114,7 +148,7 @@ resource "kubernetes_ingress_v1" "opencost" {
     }
   }
 
-  spec {   
+  spec {
     ingress_class_name = "nginx"
     rule {
       host = "opencost.cosmoinc.online" # Replace with your domain
@@ -135,4 +169,88 @@ resource "kubernetes_ingress_v1" "opencost" {
     }
   }
 
+}
+
+## To configure OpenCost for your AWS account, create an Access Key for the OpenCost user who has access to the Cost and Usage Report (CUR)
+resource "aws_iam_user" "opencost_user" {
+  name = "opencost-user"
+  path = "/"
+}
+
+resource "aws_iam_access_key" "opencost_user_key" {
+  user = aws_iam_user.opencost_user.name
+}
+output "opencost_user_key" {
+  value     = aws_iam_access_key.opencost_user_key
+  sensitive = true
+
+}
+
+resource "aws_s3_bucket" "main" {
+  bucket = "aws-athena-query-results-${module.aws_eks.cluster_eks.eks_properties.id}"
+  tags = {
+    Name = "opencost"
+  }
+}
+output "aws_s3_bucket" {
+  value     = aws_s3_bucket.main
+  sensitive = true
+
+}
+
+resource "aws_athena_database" "main" {
+  name   = "opencostathenadb"
+  bucket = aws_s3_bucket.main.id
+}
+
+output "athena_database" {
+  value     = aws_athena_database.main
+  sensitive = true
+
+}
+
+###########
+resource "aws_kms_key" "test" {
+  deletion_window_in_days = 7
+  description             = "Athena KMS Key"
+}
+resource "aws_athena_workgroup" "test" {
+  name = "opencost-athena-workgroup"
+
+  configuration {
+    result_configuration {
+      encryption_configuration {
+        encryption_option = "SSE_KMS"
+        kms_key_arn       = aws_kms_key.test.arn
+      }
+    }
+  }
+}
+resource "aws_athena_named_query" "create_table" {
+  name        = "CreateOpenCostTable"
+  database    = aws_athena_database.main.name
+  workgroup = aws_athena_workgroup.test.id  
+  description = "Creates an OpenCost table in Athena database"
+  query       = <<EOT
+CREATE EXTERNAL TABLE IF NOT EXISTS `opencostathenadb`.`opencost_table` (`column1` string, `column2` int)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://aws-athena-query-results-eks-cluster-opencost-cost/opencostobject/'
+TBLPROPERTIES (
+  'classification' = 'parquet',
+  'parquet.compression' = 'SNAPPY'
+);
+EOT
+}
+resource "null_resource" "run_existing_query" {
+  provisioner "local-exec" {
+    command = <<EOT
+      aws athena start-query-execution \
+        --query-string "$(aws athena get-named-query --named-query-id ${aws_athena_named_query.create_table.id} --output text --query 'NamedQuery.QueryString')" \
+        --query-execution-context Database=${aws_athena_database.main.id} \
+        --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/query-results/'
+    EOT
+  }
+
+  depends_on = [aws_athena_database.main, aws_athena_named_query.create_table]
 }
