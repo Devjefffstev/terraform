@@ -1,3 +1,9 @@
+variable "deleteFlag" {
+  description = "Flag to delete all resources"
+  type        = bool
+  default     = false
+
+}
 resource "random_string" "random" {
   length           = 4
   special          = true
@@ -19,18 +25,6 @@ module "helm_charts" {
       chart      = "prometheus"
       repository = "https://prometheus-community.github.io/helm-charts"
       namespace  = "prometheus-system"
-      #     extraScrapeConfigs: |
-      # - job_name: opencost
-      #   honor_labels: true
-      #   scrape_interval: 1m
-      #   scrape_timeout: 10s
-      #   metrics_path: /metrics
-      #   scheme: http
-      #   dns_sd_configs:
-      #   - names:
-      #     - opencost.opencost
-      #     type: 'A'
-      #     port: 9003
       values = [
         yamlencode({
           alertmanager = {
@@ -65,7 +59,8 @@ module "helm_charts" {
           opencost = {
             cloudIntegrationSecret = "cloud-costs"
             cloudCost = {
-              enabled = true
+              enabled          = true
+              refreshRateHours = 0.1
             }
           }
         })
@@ -175,6 +170,7 @@ resource "kubernetes_ingress_v1" "opencost" {
 resource "aws_iam_user" "opencost_user" {
   name = "opencost-user"
   path = "/"
+
 }
 
 resource "aws_iam_access_key" "opencost_user_key" {
@@ -187,10 +183,71 @@ output "opencost_user_key" {
 }
 
 resource "aws_s3_bucket" "main" {
-  bucket = "aws-athena-query-results-${module.aws_eks.cluster_eks.eks_properties.id}"
+  # for_each = {
+  #   aws-athena-query-results-opencost-epam = {
+  #    tags = {
+  #       Name = "opencost-athena-query-results"
+  #     }
+  #   }
+  #   aws-athena-cur-opencost = {
+  #     tags = {
+  #       Name = "cur-report-opencost"
+  #     }
+  #   }
+  # }
+  # bucket = each.key  
+
+  # tags = each.value.tags
+  bucket = "opencost-athena-query-results-opencost-epam"
   tags = {
-    Name = "opencost"
+    Name = "opencost-athena-query-results"
   }
+}
+resource "aws_s3_bucket" "curcost" {
+  # for_each = {
+  #   aws-athena-query-results-opencost-epam = {
+  #    tags = {
+  #       Name = "opencost-athena-query-results"
+  #     }
+  #   }
+  #   aws-athena-cur-opencost = {
+  #     tags = {
+  #       Name = "cur-report-opencost"
+  #     }
+  #   }
+  # }
+  # bucket = each.key  
+
+  # tags = each.value.tags
+  bucket = "opencost-bucket-cur"
+  tags = {
+    Name = "opencost-athena-query-results"
+  }
+}
+resource "aws_s3_bucket_policy" "curcost_policy" {
+  bucket = aws_s3_bucket.curcost.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action    = ["s3:PutObject"],
+        Effect    = "Allow",
+        Principal = { Service = "billingreports.amazonaws.com" },
+        Resource  = "${aws_s3_bucket.curcost.arn}/*"
+      },
+      {
+        Action    = ["s3:GetBucketAcl"],
+        Effect    = "Allow",
+        Principal = { Service = "billingreports.amazonaws.com" },
+        Resource  = "${aws_s3_bucket.curcost.arn}"
+      }
+    ]
+  })
+}
+resource "aws_iam_user_policy" "opencost-cur-access-policy" {
+  name   = "opencost_policy"
+  user   = aws_iam_user.opencost_user.name
+  policy = data.aws_iam_policy_document.opencost-cur-access-policy.json
 }
 output "aws_s3_bucket" {
   value     = aws_s3_bucket.main
@@ -229,28 +286,42 @@ resource "aws_athena_workgroup" "test" {
 resource "aws_athena_named_query" "create_table" {
   name        = "CreateOpenCostTable"
   database    = aws_athena_database.main.name
-  workgroup = aws_athena_workgroup.test.id  
+  workgroup   = aws_athena_workgroup.test.id
   description = "Creates an OpenCost table in Athena database"
   query       = <<EOT
-CREATE EXTERNAL TABLE IF NOT EXISTS `opencostathenadb`.`opencost_table` (`column1` string, `column2` int)
-ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
-STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
-LOCATION 's3://aws-athena-query-results-eks-cluster-opencost-cost/opencostobject/'
-TBLPROPERTIES (
-  'classification' = 'parquet',
-  'parquet.compression' = 'SNAPPY'
-);
+CREATE EXTERNAL TABLE IF NOT EXISTS `${aws_athena_database.main.name}`.`opencost_table` (`bill_invoice_id` string, `bill_invoicing_entity` int)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES ('field.delim' = ',')
+STORED AS INPUTFORMAT 'org.apache.hadoop.mapred.TextInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION 's3://${aws_s3_bucket.main.id}/result-query/'
+TBLPROPERTIES ('classification' = 'csv');
 EOT
 }
-resource "null_resource" "run_existing_query" {
+resource "terraform_data" "run_existing_query" {
+  count = var.deleteFlag ? 0 : 1
   provisioner "local-exec" {
     command = <<EOT
       aws athena start-query-execution \
         --query-string "$(aws athena get-named-query --named-query-id ${aws_athena_named_query.create_table.id} --output text --query 'NamedQuery.QueryString')" \
         --query-execution-context Database=${aws_athena_database.main.id} \
-        --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/query-results/'
+        --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/result-query/'
     EOT
   }
-
   depends_on = [aws_athena_database.main, aws_athena_named_query.create_table]
+}
+
+
+### CUR report 
+resource "aws_cur_report_definition" "example_cur_report_definition" {
+  report_name                = "opencost-cur-report-definition"
+  time_unit                  = "HOURLY"
+  format                     = "Parquet"
+  compression                = "Parquet"
+  additional_schema_elements = ["RESOURCES", "SPLIT_COST_ALLOCATION_DATA"]
+  s3_bucket                  = aws_s3_bucket.curcost.id
+  s3_prefix                  = "example-cur-report"
+  s3_region                  = "us-east-1"
+  report_versioning          = "OVERWRITE_REPORT"
+  additional_artifacts       = ["ATHENA"]
+  depends_on                 = [aws_s3_bucket.curcost, aws_iam_user_policy.opencost-cur-access-policy]
 }
