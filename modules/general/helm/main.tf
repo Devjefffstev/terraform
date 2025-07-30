@@ -7,5 +7,7 @@ resource "helm_release" "main" {
   repository = try(each.value.repository, null)
   version    = try(each.value.version, null)
   values     = try(each.value.values, null)
-  cleanup_on_fail = try(each.value.cleanup_on_fail, true)
+  cleanup_on_fail = try(each.value.cleanup_on_fail, null)
+  atomic = try(each.value.atomic, null)
+  timeout = try(each.value.timeout, null)
 }

@@ -49,7 +49,7 @@ resource "aws_eks_node_group" "main" {
   node_group_name = each.key
   node_role_arn   = each.value.node_role_arn
   subnet_ids      = each.value.subnet_ids
-
+  instance_types  = each.value.instance_types
   scaling_config {
     desired_size = each.value.scaling_config.desired_size
     max_size     = each.value.scaling_config.max_size
@@ -63,11 +63,11 @@ resource "aws_eks_node_group" "main" {
   depends_on = [aws_eks_cluster.main]
 }
 
-resource "aws_eks_addon" "main" {
-  for_each      = local.eks_addons
-  cluster_name  = aws_eks_cluster.main.id
-  addon_name    = each.value.addon_name
-  addon_version = try(each.value.addon_version, null)
+resource "aws_eks_addon" "pre" {
+  for_each                    = local.eks_addons_pre
+  cluster_name                = aws_eks_cluster.main.id
+  addon_name                  = each.value.addon_name
+  addon_version               = try(each.value.addon_version, null)
   resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, null)
   resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, null)
   dynamic "pod_identity_association" {
@@ -78,4 +78,20 @@ resource "aws_eks_addon" "main" {
     }
   }
   depends_on = [aws_eks_cluster.main]
+}
+resource "aws_eks_addon" "post" {
+  for_each                    = local.eks_addons_post
+  cluster_name                = aws_eks_cluster.main.id
+  addon_name                  = each.value.addon_name
+  addon_version               = try(each.value.addon_version, null)
+  resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, null)
+  resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, null)
+  dynamic "pod_identity_association" {
+    for_each = each.value.pod_identity_association != null ? [each.value.pod_identity_association] : []
+    content {
+      role_arn        = pod_identity_association.value.role_arn
+      service_account = pod_identity_association.value.service_account
+    }
+  }
+  depends_on = [aws_eks_cluster.main, aws_eks_node_group.main, aws_eks_addon.pre]
 }

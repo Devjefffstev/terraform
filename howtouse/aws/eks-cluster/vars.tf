@@ -1,13 +1,13 @@
 # Define AWS access key and secret key variables
-variable "aws_access_key" {
-  description = "AWS Access Key"
-  type        = string
+# variable "aws_access_key" {
+#   description = "AWS Access Key"
+#   type        = string
 
-}
-variable "aws_secret_key" {
-  description = "AWS Secret Key"
-  type        = string
-}
+# }
+# variable "aws_secret_key" {
+#   description = "AWS Secret Key"
+#   type        = string
+# }
 
 # Define AWS Roles for EKS cluster and nodes 
 variable "this_aws_iam_role" {
@@ -209,4 +209,10 @@ variable "eks_node_group" {
       }
     }
   }
+}
+variable "principal_arn_user" {
+  description = "ARN of the IAM user to grant access to the EKS cluster"
+  type        = string
+  default     = "arn:aws:iam::123456789012:user/your-username" # Replace with your actual IAM user ARN
+  
 }

@@ -12,7 +12,7 @@ module "aws_vpc" {
 
 module "eks_example" {
   source           = "../../../modules/aws/eks"
-  eks_cluster_name = "eks-cluster-opencost-cost"
+  eks_cluster_name = var.eks_cluster_name
   access_config    = var.access_config
   role_arn         = module.aws_iam.aws_iam_role_properties.eks_cluster_role.arn
   vpc_config = merge(var.vpc_config, {
@@ -49,7 +49,8 @@ module "eks_example" {
     {
       addon_name = "eks-pod-identity-agent"
     }
-    , {
+    ,
+    {
       addon_name = "aws-ebs-csi-driver"
       pod_identity_association = {
         role_arn        = module.aws_iam.aws_iam_role_properties.eks_auto_mode_csi_driver.arn
@@ -81,7 +82,8 @@ locals {
 ## In order to connect to the EKS cluster and see the objects, you need to create a eks_access_entry for your user.
 resource "aws_eks_access_entry" "example" {
   cluster_name  = module.eks_example.eks_properties.name
-  principal_arn = "arn:aws:iam::768312754627:user/jeffsoto"
+  # principal_arn = "arn:aws:iam::768312754627:user/jeffsoto"
+  principal_arn = var.principal_arn_user
   type          = "STANDARD"
 
 }
@@ -116,6 +118,6 @@ resource "aws_eks_access_policy_association" "example" {
   }
 }
 
-# to run this module using a inline command terraform apply --auto-approve 
-# give me a command to run terraform apply with auto-approve multiple times
-# bash - c 'for i in {1..5}; do terraform apply --auto-approve; done'
+# # to run this module using a inline command terraform apply --auto-approve 
+# # give me a command to run terraform apply with auto-approve multiple times
+# # bash - c 'for i in {1..5}; do terraform apply --auto-approve; done'

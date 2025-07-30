@@ -1,0 +1,5 @@
+## variables for backend config in terraform for a S3 bucket
+    bucket = "terraform-opencost-test-6311"
+    key    = "opencost-6311.tfstate"
+    region = "us-east-1"
+    profile= "account6311"

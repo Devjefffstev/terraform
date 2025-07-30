@@ -97,6 +97,7 @@ variable "eks_node_group" {
   type = map(object({
     node_role_arn = string
     subnet_ids    = list(string)
+    instance_types = optional(list(string), ["t3.small"])
     scaling_config = object({
       desired_size = number
       max_size     = number

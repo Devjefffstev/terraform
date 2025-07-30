@@ -1,23 +1,11 @@
-variable "deleteFlag" {
-  description = "Flag to delete all resources"
-  type        = bool
-  default     = false
-
-}
-resource "random_string" "random" {
-  length           = 4
-  special          = true
-  override_special = "/@£$"
-}
 module "aws_eks" {
-  source         = "../../howtouse/aws/eks-automode"
-  aws_access_key = var.aws_access_key
-  aws_secret_key = var.aws_secret_key
+  source = "../../howtouse/aws/eks-cluster"
+  # aws_access_key   = var.aws_access_key
+  # aws_secret_key   = var.aws_secret_key
+  eks_cluster_name   = "eks-opencost-${local.unique_value}"
+  principal_arn_user = "arn:aws:iam::124345666311:user/jeffnoprod"
+}
 
-}
-output "aws_eks" {
-  value = module.aws_eks.cluster_eks.eks_properties
-}
 module "helm_charts" {
   source = "../../modules/general/helm"
   helm_releases = {
@@ -66,20 +54,7 @@ module "helm_charts" {
         })
       ]
     }
-    nginx-ingress-controller = {
-      chart            = "ingress-nginx"
-      repository       = "https://kubernetes.github.io/ingress-nginx"
-      namespace        = "ingress-nginx"
-      create_namespace = true
-      values = [
-        <<-EOT
-          controller:
-            service:
-              enabled: true
-              type: LoadBalancer
-        EOT
-      ]
-    }
+
     ## helloworld basic application with ingress 
     helloworld = {
       chart            = "nginx"
@@ -103,15 +78,30 @@ module "helm_charts" {
     }
 
   }
+  depends_on = [kubernetes_storage_class_v1.main, module.pre_helm_charts]
+}
+module "pre_helm_charts" {
+  source = "../../modules/general/helm"
+  helm_releases = {
+    nginx-ingress-controller = {
+      chart            = "ingress-nginx"
+      repository       = "https://kubernetes.github.io/ingress-nginx"
+      namespace        = "ingress-nginx"
+      create_namespace = true
+      values = [
+        <<-EOT
+          controller:
+            service:
+              enabled: true
+              type: LoadBalancer
+        EOT
+      ]
+    }
+    ## helloworld basic application with ingress 
+
+  }
   depends_on = [kubernetes_storage_class_v1.main]
 }
-
-output "helm_charts" {
-  value     = module.helm_charts
-  sensitive = true
-
-}
-
 resource "kubernetes_storage_class_v1" "main" {
   # Matches the provisioner in the YAML definition
   storage_provisioner = "ebs.csi.aws.com"
@@ -132,8 +122,9 @@ resource "kubernetes_storage_class_v1" "main" {
       "storageclass.kubernetes.io/is-default-class" = "true" # Don't make this default
     }
   }
-}
+  depends_on = [module.aws_eks]
 
+}
 resource "kubernetes_ingress_v1" "opencost" {
   metadata {
     name      = "open-cost-ingress"
@@ -145,8 +136,27 @@ resource "kubernetes_ingress_v1" "opencost" {
 
   spec {
     ingress_class_name = "nginx"
+
     rule {
       host = "opencost.cosmoinc.online" # Replace with your domain
+
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = "opencost"
+              port {
+                name = "http-ui"
+              }
+            }
+          }
+        }
+      }
+    }
+    rule {
+      host = "opencost.aws.ociatepam.online" # Replace with your domain
       http {
         path {
           path      = "/"
@@ -163,65 +173,27 @@ resource "kubernetes_ingress_v1" "opencost" {
       }
     }
   }
-
+  depends_on = [module.aws_eks, module.helm_charts]
 }
-
 ## To configure OpenCost for your AWS account, create an Access Key for the OpenCost user who has access to the Cost and Usage Report (CUR)
 resource "aws_iam_user" "opencost_user" {
   name = "opencost-user"
   path = "/"
 
 }
-
 resource "aws_iam_access_key" "opencost_user_key" {
   user = aws_iam_user.opencost_user.name
 }
-output "opencost_user_key" {
-  value     = aws_iam_access_key.opencost_user_key
-  sensitive = true
-
-}
-
 resource "aws_s3_bucket" "main" {
-  # for_each = {
-  #   aws-athena-query-results-opencost-epam = {
-  #    tags = {
-  #       Name = "opencost-athena-query-results"
-  #     }
-  #   }
-  #   aws-athena-cur-opencost = {
-  #     tags = {
-  #       Name = "cur-report-opencost"
-  #     }
-  #   }
-  # }
-  # bucket = each.key  
-
-  # tags = each.value.tags
-  bucket = "opencost-athena-query-results-opencost-epam"
+  bucket = "opencost-athena-query-results-${local.unique_value}"
   tags = {
-    Name = "opencost-athena-query-results"
+    Name = "opencost-athena-query-results-${local.unique_value}"
   }
 }
 resource "aws_s3_bucket" "curcost" {
-  # for_each = {
-  #   aws-athena-query-results-opencost-epam = {
-  #    tags = {
-  #       Name = "opencost-athena-query-results"
-  #     }
-  #   }
-  #   aws-athena-cur-opencost = {
-  #     tags = {
-  #       Name = "cur-report-opencost"
-  #     }
-  #   }
-  # }
-  # bucket = each.key  
-
-  # tags = each.value.tags
-  bucket = "opencost-bucket-cur"
+  bucket = "opencost-bucket-cur${local.unique_value}"
   tags = {
-    Name = "opencost-athena-query-results"
+    Name = "opencost-bucket-cur-${local.unique_value}"
   }
 }
 resource "aws_s3_bucket_policy" "curcost_policy" {
@@ -249,66 +221,62 @@ resource "aws_iam_user_policy" "opencost-cur-access-policy" {
   user   = aws_iam_user.opencost_user.name
   policy = data.aws_iam_policy_document.opencost-cur-access-policy.json
 }
-output "aws_s3_bucket" {
-  value     = aws_s3_bucket.main
-  sensitive = true
 
-}
 
-resource "aws_athena_database" "main" {
-  name   = "opencostathenadb"
-  bucket = aws_s3_bucket.main.id
-}
+# resource "aws_athena_database" "main" {
+#   name   = "opencostathenadb"
+#   bucket = aws_s3_bucket.main.id
+# }
 
-output "athena_database" {
-  value     = aws_athena_database.main
-  sensitive = true
+# output "athena_database" {
+#   value     = aws_athena_database.main
+#   sensitive = true
 
-}
+# }
 
-###########
-resource "aws_kms_key" "test" {
-  deletion_window_in_days = 7
-  description             = "Athena KMS Key"
-}
-resource "aws_athena_workgroup" "test" {
-  name = "opencost-athena-workgroup"
+# ###########
+# resource "aws_kms_key" "test" {
+#   deletion_window_in_days = 7
+#   description             = "Athena KMS Key"
+# }
+# resource "aws_athena_workgroup" "test" {
+#   name = "opencost-athena-workgroup"
 
-  configuration {
-    result_configuration {
-      encryption_configuration {
-        encryption_option = "SSE_KMS"
-        kms_key_arn       = aws_kms_key.test.arn
-      }
-    }
-  }
-}
-resource "aws_athena_named_query" "create_table" {
-  name        = "CreateOpenCostTable"
-  database    = aws_athena_database.main.name
-  workgroup   = aws_athena_workgroup.test.id
-  description = "Creates an OpenCost table in Athena database"
-  query       = <<EOT
-CREATE EXTERNAL TABLE IF NOT EXISTS `${aws_athena_database.main.name}`.`opencost_table` (`bill_invoice_id` string, `bill_invoicing_entity` int)
-ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
-WITH SERDEPROPERTIES ('field.delim' = ',')
-STORED AS INPUTFORMAT 'org.apache.hadoop.mapred.TextInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
-LOCATION 's3://${aws_s3_bucket.main.id}/result-query/'
-TBLPROPERTIES ('classification' = 'csv');
-EOT
-}
-resource "terraform_data" "run_existing_query" {
-  count = var.deleteFlag ? 0 : 1
-  provisioner "local-exec" {
-    command = <<EOT
-      aws athena start-query-execution \
-        --query-string "$(aws athena get-named-query --named-query-id ${aws_athena_named_query.create_table.id} --output text --query 'NamedQuery.QueryString')" \
-        --query-execution-context Database=${aws_athena_database.main.id} \
-        --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/result-query/'
-    EOT
-  }
-  depends_on = [aws_athena_database.main, aws_athena_named_query.create_table]
-}
+#   configuration {
+#     result_configuration {
+#       encryption_configuration {
+#         encryption_option = "SSE_KMS"
+#         kms_key_arn       = aws_kms_key.test.arn
+#       }
+#     }
+#   }
+# }
+# resource "aws_athena_named_query" "create_table" {
+#   name        = "CreateOpenCostTable"
+#   database    = aws_athena_database.main.name
+#   workgroup   = aws_athena_workgroup.test.id
+#   description = "Creates an OpenCost table in Athena database"
+#   query       = <<EOT
+# CREATE EXTERNAL TABLE IF NOT EXISTS `${aws_athena_database.main.name}`.`opencost_table` (`bill_invoice_id` string, `bill_invoicing_entity` int)
+# ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+# WITH SERDEPROPERTIES ('field.delim' = ',')
+# STORED AS INPUTFORMAT 'org.apache.hadoop.mapred.TextInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+# LOCATION 's3://${aws_s3_bucket.main.id}/result-query/'
+# TBLPROPERTIES ('classification' = 'csv');
+# EOT
+# }
+# resource "terraform_data" "run_existing_query" {
+#   count = var.deleteFlag ? 0 : 1
+#   provisioner "local-exec" {
+#     command = <<EOT
+#       aws athena start-query-execution \
+#         --query-string "$(aws athena get-named-query --named-query-id ${aws_athena_named_query.create_table.id} --output text --query 'NamedQuery.QueryString')" \
+#         --query-execution-context Database=${aws_athena_database.main.id} \
+#         --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/result-query/'
+#     EOT
+#   }
+#   depends_on = [aws_athena_database.main, aws_athena_named_query.create_table]
+# }
 
 
 ### CUR report 
@@ -324,4 +292,27 @@ resource "aws_cur_report_definition" "example_cur_report_definition" {
   report_versioning          = "OVERWRITE_REPORT"
   additional_artifacts       = ["ATHENA"]
   depends_on                 = [aws_s3_bucket.curcost, aws_iam_user_policy.opencost-cur-access-policy]
+}
+
+resource "kubernetes_secret_v1" "aws_secret" {
+  metadata {
+    name      = "cloud-costs" #Keep this name consistent with the HELM OpenCost configuration
+    namespace = "opencost"    # Change to the target namespace if necessary
+  }
+
+  data = {
+    "cloud-integration.json" = templatefile("${path.module}/cloud-integration.json.tpl", {
+      bucket            = "s3://${aws_s3_bucket.main.id}/queryresults/"
+      region            = aws_s3_bucket.main.region
+      database          = "athenacurcfn_opencost_cur_report_definition"
+      table             = "opencost_cur_report_definition"
+      workgroup         = "primary"
+      account           = data.aws_caller_identity.current.account_id
+      authorizer_type   = "AWSAccessKey"
+      access_key_id     = "${aws_iam_access_key.opencost_user_key.id}"
+      secret_access_key = "${aws_iam_access_key.opencost_user_key.secret}"
+    })
+  }
+
+  type = "Opaque"
 }

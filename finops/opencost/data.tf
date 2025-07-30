@@ -61,3 +61,11 @@ data "aws_iam_policy_document" "opencost-cur-access-policy" {
   }
 
 }
+
+#read region and account config 
+data "aws_account_primary_contact" "test" {
+  
+}
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
