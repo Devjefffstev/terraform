@@ -222,64 +222,7 @@ resource "aws_iam_user_policy" "opencost-cur-access-policy" {
   policy = data.aws_iam_policy_document.opencost-cur-access-policy.json
 }
 
-
-# resource "aws_athena_database" "main" {
-#   name   = "opencostathenadb"
-#   bucket = aws_s3_bucket.main.id
-# }
-
-# output "athena_database" {
-#   value     = aws_athena_database.main
-#   sensitive = true
-
-# }
-
-# ###########
-# resource "aws_kms_key" "test" {
-#   deletion_window_in_days = 7
-#   description             = "Athena KMS Key"
-# }
-# resource "aws_athena_workgroup" "test" {
-#   name = "opencost-athena-workgroup"
-
-#   configuration {
-#     result_configuration {
-#       encryption_configuration {
-#         encryption_option = "SSE_KMS"
-#         kms_key_arn       = aws_kms_key.test.arn
-#       }
-#     }
-#   }
-# }
-# resource "aws_athena_named_query" "create_table" {
-#   name        = "CreateOpenCostTable"
-#   database    = aws_athena_database.main.name
-#   workgroup   = aws_athena_workgroup.test.id
-#   description = "Creates an OpenCost table in Athena database"
-#   query       = <<EOT
-# CREATE EXTERNAL TABLE IF NOT EXISTS `${aws_athena_database.main.name}`.`opencost_table` (`bill_invoice_id` string, `bill_invoicing_entity` int)
-# ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
-# WITH SERDEPROPERTIES ('field.delim' = ',')
-# STORED AS INPUTFORMAT 'org.apache.hadoop.mapred.TextInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
-# LOCATION 's3://${aws_s3_bucket.main.id}/result-query/'
-# TBLPROPERTIES ('classification' = 'csv');
-# EOT
-# }
-# resource "terraform_data" "run_existing_query" {
-#   count = var.deleteFlag ? 0 : 1
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       aws athena start-query-execution \
-#         --query-string "$(aws athena get-named-query --named-query-id ${aws_athena_named_query.create_table.id} --output text --query 'NamedQuery.QueryString')" \
-#         --query-execution-context Database=${aws_athena_database.main.id} \
-#         --result-configuration OutputLocation='s3://${aws_s3_bucket.main.id}/result-query/'
-#     EOT
-#   }
-#   depends_on = [aws_athena_database.main, aws_athena_named_query.create_table]
-# }
-
-
-### CUR report 
+### CUR report. You must 24 hours prior the report is generated
 resource "aws_cur_report_definition" "example_cur_report_definition" {
   report_name                = "opencost-cur-report-definition"
   time_unit                  = "HOURLY"
