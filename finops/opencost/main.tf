@@ -70,8 +70,8 @@ module "helm_charts" {
             enabled          = true
             path             = "/"
             ingressClassName = "nginx"
-            hostname         = "helloworld.opencost.cosmoinc.online"   # Replace with your domain
-            hosts            = ["helloworld.opencost.cosmoinc.online"] # Replace with your domain
+            hostname         = "helloworld.aws.ociatepam.online"   # Replace with your domain
+            hosts            = ["helloworld.aws.ociatepam.online"] # Replace with your domain
           }
         })
       ]
@@ -138,7 +138,7 @@ resource "kubernetes_ingress_v1" "opencost" {
     ingress_class_name = "nginx"
 
     rule {
-      host = "opencost.cosmoinc.online" # Replace with your domain
+      host = "opencost.nonprod.aws.ociatepam.online" # Replace with your domain
 
       http {
         path {
