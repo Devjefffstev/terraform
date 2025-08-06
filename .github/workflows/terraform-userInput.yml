@@ -14,23 +14,21 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
-    environment: Prod
+    environment: Reviewers
     
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
     env:
-      ARM_CLIENT_ID: ${{ secrets.APP_ID }}
+      ARM_CLIENT_ID: ${{ vars.APP_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.APP_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ vars.TENANT_ID }}
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
-    - name: get tenant
-      run: echo "Tenant ID is ${{ secrets.TENANT_ID }}"
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -62,10 +60,10 @@ jobs:
       run:
         shell: bash
     env:
-      ARM_CLIENT_ID: ${{ secrets.APP_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.APP_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+       ARM_CLIENT_ID: ${{ vars.APP_ID }}
+       ARM_CLIENT_SECRET: ${{ secrets.APP_SECRET }}
+       ARM_SUBSCRIPTION_ID: ${{ vars.SUBSCRIPTION_ID }}
+       ARM_TENANT_ID: ${{ vars.TENANT_ID }}
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
