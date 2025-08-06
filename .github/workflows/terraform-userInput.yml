@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform-user-input:
+    name: 'Terraform_UserInput'
     runs-on: ubuntu-latest
     # environment: Subs_fran
     environment: Reviewers
