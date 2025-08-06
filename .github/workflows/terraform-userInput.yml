@@ -1,0 +1,55 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ "main", "workflow-terraform" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    # environment: Subs_fran
+    environment: Reviewers
+    
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      ARM_CLIENT_ID: ${{ secrets.APP_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.APP_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+    
+    # Change to the directory where Terraform configuration files are located
+    - name: Change Directory to aks-example
+      run: cd howtouse/azure/aks-example
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init -backend-config="howtouse/azure/backend/backendmain.tf"
+      working-directory: howtouse/azure/aks-example
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
+      working-directory: howtouse/azure/aks-example
+
+    # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: terraform apply
+      # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/workflow-terraform' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false -var "subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}" -var-file=vars.auto.tfvars
+      working-directory: howtouse/azure/aks-example
