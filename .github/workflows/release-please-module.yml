@@ -19,6 +19,7 @@ jobs:
   package-release-please:
     name: package-release-please    
     uses: ./.github/workflows/release-please-tmpl.yml    
-    secrets: inherit
+    secrets: 
+        secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      
     
