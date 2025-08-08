@@ -1,0 +1,18 @@
+{
+  "azure": {
+    "storage": [
+      {
+        "subscriptionID": "4ccb67b6-0e4c-45c5-88bf-ba71125163e1",
+        "account": "storageopencost",
+        "container": "opencost",
+        "path": "",
+        "cloud": "public",
+        "authorizer": {
+          "accessKey": "sp=r&st=2025-07-16T14:26:02Z&se=2025-09-16T22:41:02Z&sv=2024-11-04&sr=c&sig=ZB%2FPtsvZBYNmzbZSHSxBiypNw7EYdyQt9nc7TDnRMz0%3D",
+          "account": "storageopencost",
+          "authorizerType": "AzureAccessKey"
+        }
+      }
+    ]
+  }
+}
