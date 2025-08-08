@@ -9,6 +9,7 @@ on:
       module_version:
         required: false
         type: string
+    secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
         default: ${{ secrets.GITHUB_TOKEN }}
