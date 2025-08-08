@@ -25,7 +25,7 @@ jobs:
       release_id: release_id
       release_url: release_url
     steps:      
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
         id: release-please-package
         with:
           token: ${{ secrets.secret_github_token }}
