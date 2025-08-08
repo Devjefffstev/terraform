@@ -1,0 +1,23 @@
+name: 'Release Please Module'
+
+on: 
+  push: 
+    branches:
+      - main
+      - dev
+      - 'release**' 
+    # paths:
+    #   - 'modules/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+
+jobs:
+  package-release-please:
+    name: package-release-please    
+    uses: ./.github/workflow-template/release-please.yml
+    with:      
+      secret_github_token: ${{ secrets.GITHUB_TOKEN }} 
+    secrets: inherit      
