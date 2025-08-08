@@ -8,21 +8,19 @@ on:
         type: string
       module_version:
         required: false
-        type: string
+        type: string   
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
-        default: ${{ secrets.GITHUB_TOKEN }}
-        required: false
-        type: string
-
+        
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
   release-please-template:
-    name: release-please-template    
+    name: release-please-template  
+    runs-on: ubuntu-latest  
     outputs:
       release_id: release_id
       release_url: release_url
@@ -30,7 +28,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v4
         id: release-please-package
         with:
-          token: ${{ inputs.secret_github_token }}
+          token: ${{ secrets.secret_github_token }}
           config-file: /modules/release-please-config-terraform-modules.yml
           manifest-file: /modules/release-please-manifest-terraform-modules.yml
       - name: Print release information
