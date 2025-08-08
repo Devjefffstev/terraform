@@ -27,21 +27,21 @@ output "rg-properties" {
   value       = module.resource_group_example_single_resource_group  
 }
 
-module "aks_poc" {
-  source = "../../../modules/azure/aks"
+# module "aks_poc" {
+#   source = "../../../modules/azure/aks"
 
-  name                = "aks-poc-${var.name}"
-  location            = var.location
-  resource_group_name = module.resource_group_example_single_resource_group.resource_group_prop_single.name
-  dns_prefix          = "aks-poc-${var.name}"
+#   name                = "aks-poc-${var.name}"
+#   location            = var.location
+#   resource_group_name = module.resource_group_example_single_resource_group.resource_group_prop_single.name
+#   dns_prefix          = "aks-poc-${var.name}"
   
-  default_node_pool = {
-    name       = var.default_node_pool.name
-    node_count = var.default_node_pool.node_count
-    vm_size    = var.default_node_pool.vm_size 
-  }
+#   default_node_pool = {
+#     name       = var.default_node_pool.name
+#     node_count = var.default_node_pool.node_count
+#     vm_size    = var.default_node_pool.vm_size 
+#   }
 
-  identity = {
-    type         = var.identity.type    
-  }
-}
+#   identity = {
+#     type         = var.identity.type    
+#   }
+# }
