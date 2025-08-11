@@ -1,10 +1,9 @@
-{
+{   
     "separate-pull-requests": true,
     "packages": {
         "modules/azure/resource-group": {
             "release-type": "terraform-module",
-            "changelog-path": "modules/azure/CHANGELOG.md",
-            "version-file": "modules/azure/resource-group/VERSION"
+            "changelog-path": "modules/azure/CHANGELOG.md"      
         }
     }
 }
