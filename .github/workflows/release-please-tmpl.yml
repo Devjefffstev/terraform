@@ -31,8 +31,7 @@ jobs:
     name: release-please-template  
     runs-on: ubuntu-latest  
     outputs:
-      release_id: release_id
-      release_url: release_url
+      release_outputs: steps.release-please-package.outputs      
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
