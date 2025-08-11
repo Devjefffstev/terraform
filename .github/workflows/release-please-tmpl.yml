@@ -3,11 +3,11 @@ name: release-please-terraform-modules
 on: 
   workflow_call: 
     inputs:
-      module_name:
-        required: false
+      config-file:
+        required: true
         type: string
-      module_version:
-        required: false
+      manifest-file:
+        required: true
         type: string   
     secrets:
       secret_github_token:
@@ -29,8 +29,8 @@ jobs:
         id: release-please-package
         with:
           token: ${{ secrets.secret_github_token }}
-          config-file: /modules/release-please-config-terraform-modules.yml
-          manifest-file: /modules/release-please-manifest-terraform-modules.yml
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file}}
       - name: Print release information
         continue-on-error: true
         run: |

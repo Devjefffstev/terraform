@@ -19,6 +19,9 @@ jobs:
   package-release-please:
     name: package-release-please    
     uses: ./.github/workflows/release-please-tmpl.yml    
+    with:
+      config-file: /modules/release-please-config-terraform-modules.yml
+      manifest-file: /modules/release-please-manifest-terraform-modules.yml
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      
