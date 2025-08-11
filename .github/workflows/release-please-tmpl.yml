@@ -9,6 +9,12 @@ on:
       manifest-file:
         required: true
         type: string   
+      repo-url:
+        required: false
+        type: string
+      branch:
+        required: false
+        type: string
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -31,7 +37,7 @@ jobs:
           token: ${{ secrets.secret_github_token }}
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file}}
-          repo-url: ${{ github.repository }}
+          repo-url: ${{ inputs.repo-url }}${{ inputs.branch }}
       - name: Print release information
         continue-on-error: true
         run: |
