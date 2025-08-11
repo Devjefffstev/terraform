@@ -4,11 +4,15 @@
     "packages": {
         "modules/azure/resource-group": {
             "release-type": "terraform-module",
-            "path": "modules/azure/resource-group"
+            "path": "modules/azure/resource-group",
+            "component": "resource-group-component",
+            "package-name": "package-azure-resource-group"
         },
         "modules/azure/aks": {
             "release-type": "terraform-module",
-            "path": "modules/azure/aks"
+            "path": "modules/azure/aks",
+            "component": "aks-component",
+            "package-name": "package-azure-aks"
         }
     }
 }
