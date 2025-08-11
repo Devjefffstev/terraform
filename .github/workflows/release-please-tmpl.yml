@@ -15,6 +15,7 @@ on:
       branch:
         required: false
         type: string
+        default: main
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -33,14 +34,14 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
-             
+
       - uses: googleapis/release-please-action@v4
         id: release-please-package
         with:
           token: ${{ secrets.secret_github_token }}
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file}}
-          repo-url: ${{ inputs.repo-url }}${{ inputs.branch || 'main' }}
+          repo-url: ${{ inputs.repo-url }}${{ inputs.branch }}
       - name: Print release information
         continue-on-error: true
         run: |
