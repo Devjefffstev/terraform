@@ -5,4 +5,5 @@ variable "resource_group_prop" {
     tags     = optional(map(string), {})
   }))
   default = {}
+  
 }
