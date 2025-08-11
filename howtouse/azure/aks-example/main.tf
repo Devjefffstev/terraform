@@ -45,3 +45,21 @@ output "rg-properties" {
 #     type         = var.identity.type    
 #   }
 # }
+module "aks_poc" {
+  source = "git@github.com:Devjefffstev/terraform.git//modules/azure/aks"
+
+  name                = "aks-poc-${var.name}"
+  location            = var.location
+  resource_group_name = module.resource_group_example_single_resource_group.resource_group_prop_single.name
+  dns_prefix          = "aks-poc-${var.name}"
+  
+  default_node_pool = {
+    name       = var.default_node_pool.name
+    node_count = var.default_node_pool.node_count
+    vm_size    = var.default_node_pool.vm_size 
+  }
+
+  identity = {
+    type         = var.identity.type    
+  }
+}
