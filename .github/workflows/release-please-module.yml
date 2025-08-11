@@ -23,7 +23,7 @@ jobs:
       config-file: /modules/release-please-config-terraform-modules.json
       manifest-file: /modules/release-please-manifest-terraform-modules.json
       repo-url: ${{ github.repository }}
-      branch: '@release-please'
+      branch: release-please
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      

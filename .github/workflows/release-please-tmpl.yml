@@ -37,7 +37,7 @@ jobs:
           token: ${{ secrets.secret_github_token }}
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file}}
-          repo-url: ${{ inputs.repo-url }}${{ inputs.branch }}
+          repo-url: ${{ inputs.repo-url }}${{ inputs.branch || 'main' }}
       - name: Print release information
         continue-on-error: true
         run: |
