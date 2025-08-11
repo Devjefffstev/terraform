@@ -51,5 +51,4 @@ jobs:
         continue-on-error: true
         run: |
           echo "Release Outputs"
-          echo "Release Info: ${{ steps.release-please-package.outputs }}"
-          
+          echo "Release Info: ${{ toJson(steps.release-please-package.outputs) }}"
