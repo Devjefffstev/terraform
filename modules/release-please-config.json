@@ -3,8 +3,7 @@
     "separate-pull-requests": true,
     "packages": {
         "modules/azure/resource-group": {
-            "release-type": "terraform-module",
-            "path": "modules/azure/resource-group"
+            "release-type": "terraform-module"            
         }
     }
 }
