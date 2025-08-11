@@ -4,3 +4,5 @@ resource "azurerm_resource_group" "main_for_each" {
   location = each.value.location
   tags     = try(each.value.tags, null)
 }
+
+
