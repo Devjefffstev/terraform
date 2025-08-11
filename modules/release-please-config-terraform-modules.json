@@ -1,5 +1,4 @@
-{
-    "bootstrap-sha": "c3e2ad34c552bc52402104fbbc882cec3993c264",
+{   
     "separate-pull-requests": true,
     "packages": {
         "modules/azure/resource-group": {
