@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         module: ${{ fromJSON(needs.find-release-changes.outputs.module-paths) }}
-    if: ${{ matrix.include != '' }}
+    if: ${{ matrix.module != '' }}
     with:
     #   config-file: modules/release-please-config.json
     #   manifest-file: modules/.release-please-manifest.json
