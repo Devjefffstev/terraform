@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: find-release-changes
     steps:
-      - run: echo ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
+      - run: echo ${{toJson(needs.find-release-changes.outputs.module-paths)}}
 
   package-release-please:
     name: package-release-please    
