@@ -80,6 +80,7 @@ jobs:
           package-name: ${{ inputs.path }}
           include-v-in-tag: ${{ inputs.include-v-in-tag }}
           include-component-in-tag: ${{ inputs.include-component-in-tag }}
+          monorepo-tags: true
       - name: Print release information
         continue-on-error: true
         run: |
