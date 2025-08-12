@@ -26,6 +26,7 @@ jobs:
       repo-url: ${{ github.repository }}
       branch: release-please-config
       skip-github-release: true
+      skip-github-pull-request: true
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      

@@ -20,6 +20,10 @@ on:
         required: false
         type: boolean
         default: false
+      skip-github-pull-request:
+        required: false
+        type: boolean
+        default: false
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -52,6 +56,7 @@ jobs:
           #repo-url: "${{ inputs.repo-url }}/${{ inputs.branch }}"
           target-branch: ${{ inputs.branch }}
           skip-github-release: ${{ inputs.skip-github-release }}
+          skip-github-pull-request: ${{ inputs.skip-github-pull-request }}
       - name: Print release information
         continue-on-error: true
         run: |
