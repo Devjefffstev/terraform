@@ -17,7 +17,7 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  PATH_PREFIX: modules/azure
+  PATH_PREFIX: modules/azure/
 
 jobs:
   find-release-changes:
