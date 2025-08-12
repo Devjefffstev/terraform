@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/Devjefffstev/terraform/compare/resource-group-component@v1.4.0...resource-group-component@v1.5.0) (2025-08-12)
+
+
+### Features
+
+* double add space ([992d0c8](https://github.com/Devjefffstev/terraform/commit/992d0c8d5c6cf6040d67abead89493ef219de586))
+
 ## [1.4.0](https://github.com/Devjefffstev/terraform/compare/resource-group-component-v1.3.0...resource-group-component@v1.4.0) (2025-08-11)
 
 
