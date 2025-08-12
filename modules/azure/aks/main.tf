@@ -14,6 +14,8 @@ resource "azurerm_kubernetes_cluster" "main" {
     identity_ids = var.identity.identity_ids
   }
   tags = var.tags
+  
+  
 }
 
 
