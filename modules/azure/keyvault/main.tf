@@ -28,4 +28,5 @@ resource "azurerm_key_vault_secret" "main" {
   name         = each.key
   value        = each.value.value
   key_vault_id = azurerm_key_vault.main.id
+  
 }
