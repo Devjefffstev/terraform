@@ -24,11 +24,12 @@ jobs:
       config-file: modules/release-please-config.json
       manifest-file: modules/.release-please-manifest.json
       repo-url: ${{ github.repository }}
-      branch: release-please-config
+      branch: ${{ github.ref_name }} 
       skip-github-release: false
       skip-github-pull-request: false
       path: modules
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
-     
-    
+  
+
+
