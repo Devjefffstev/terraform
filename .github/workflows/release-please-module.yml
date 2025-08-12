@@ -25,6 +25,7 @@ jobs:
       manifest-file: modules/.release-please-manifest.json
       repo-url: ${{ github.repository }}
       branch: release-please-config
+      skip-github-release: true
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      
