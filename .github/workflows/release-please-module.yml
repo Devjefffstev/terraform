@@ -1,4 +1,4 @@
-name: 'Release Please Module'
+name: 'Release Please Module iterate branch'
 
 on: 
   push: 
