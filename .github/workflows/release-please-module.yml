@@ -1,4 +1,4 @@
-name: Release please workflow Iterate
+name: 'Release please workflow Iterate'
 
 on:
   push:
