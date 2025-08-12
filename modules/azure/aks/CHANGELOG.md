@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.5.0...aks-component@v0.6.0) (2025-08-12)
+
+
+### Features
+
+* add path modules ([99407fc](https://github.com/Devjefffstev/terraform/commit/99407fc89b96c28f82c7f17754e329e2da327075))
+
 ## [0.5.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.4.0...aks-component@v0.5.0) (2025-08-12)
 
 
