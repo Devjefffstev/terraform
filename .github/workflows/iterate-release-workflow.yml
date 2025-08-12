@@ -23,6 +23,7 @@ permissions:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PATH_PREFIX: modules/azure/
+  BRANCH_PREFIX: master-main
 
 jobs:
   find-release-changes:
@@ -53,7 +54,7 @@ jobs:
             })
             console.log(`latest release: ${JSON.stringify(latestRelease.data)}`);
             execSync('git pull --tags');
-            const status = execSync(`git diff --name-only ${latestRelease.data.tag_name} origin/main`, { encoding: 'utf-8'});
+            const status = execSync(`git diff --name-only ${latestRelease.data.tag_name} origin/process.env.BRANCH_PREFIX`, { encoding: 'utf-8'});
             console.log("Status of changes since last release:");
             console.log(status);
             const changes = status.split('\n');
