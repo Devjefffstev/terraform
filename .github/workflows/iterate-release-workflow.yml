@@ -55,7 +55,7 @@ jobs:
             let modules_paths = new Set();
             for (const change of changes) {
               if (change.startsWith(process.env.PATH_PREFIX)) {
-                  const library = change.split('/')[1];
+                  const library = change.split('/')[2~];
                   modules_paths.add(library);
               };
             }
