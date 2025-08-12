@@ -41,7 +41,7 @@ on:
       include-component-in-tag:
         required: false
         type: boolean
-        default: false
+        default: true
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
