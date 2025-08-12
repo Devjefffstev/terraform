@@ -1,0 +1,15 @@
+release-please bootstrap \
+  --token=$GITHUB_TOKEN \
+  --repo-url=Devjefffstev/terraform \
+  --release-type=terraform-module \
+  --target-branch=release-please-config \
+  --package-name=azure-rg \
+  --path=modules \
+  --draft=true \
+
+
+Creating a release on GitHub
+release-please github-release \
+  --token=$GITHUB_TOKEN \
+  --repo-url=Devjefffstev/terraform \
+    --target-branch=release-please-config \

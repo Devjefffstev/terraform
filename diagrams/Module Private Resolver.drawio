@@ -1,0 +1,56 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram name="Page-1" id="fbqXyCgJFCPL8nY9t6sg">
+    <mxGraphModel dx="385" dy="731" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-1" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=4;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="850" y="392.75" width="1080" height="617.25" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-2" value="Inbound resource" style="rounded=1;whiteSpace=wrap;html=1;arcSize=4;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1165" y="510" width="220" height="106.5" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-3" value="Private DNS zone records will be&amp;nbsp;&lt;div&gt;resolved from&amp;nbsp;on-premises&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;via inbound endpoint&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#666666;fillColor=#f5f5f5;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="868" y="563.25" width="280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-4" value="Outbound resource" style="rounded=1;whiteSpace=wrap;html=1;arcSize=4;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1161.25" y="770" width="220" height="106.5" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-5" value="On-premises domain will be resolved via&amp;nbsp;&lt;br&gt;outbound endpoint with conditional rule&amp;nbsp;&lt;br&gt;from rule set" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#666666;fillColor=#f5f5f5;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="908" y="793.25" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-6" value="DNS Forwarding &lt;br&gt;Rule Set" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.file_2;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="1450" y="670" width="40" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-9" value="Private DNS Resolver" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/DNS_Private_Resolver.svg;" vertex="1" parent="1">
+          <mxGeometry x="974" y="650" width="68" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-11" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1516" y="420" width="20" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-14" value="DNS Rule" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.file_2;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="540" width="20" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-15" value="DNS Rule" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.file_2;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="800" width="20" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-16" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;dashPattern=8 8;endArrow=none;endFill=0;" edge="1" parent="1">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="1540" y="699.7900000000001" as="sourcePoint" />
+            <mxPoint x="1930" y="700.21" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-18" value="&lt;div&gt;rules = [&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;{&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; domain_name = &quot;example.com.&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; enabled&amp;nbsp; &amp;nbsp; &amp;nbsp;= true&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; target_dns_servers = [&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; {&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; ip_address = &quot;8.8.8.8&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; port&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;= 53&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; ]&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; metadata = {&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; key1 = &quot;value1&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; },&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; {&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; domain_name = &quot;visier.com.&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; enabled&amp;nbsp; &amp;nbsp; &amp;nbsp;= true&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; target_dns_servers = [&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; {&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; ip_address = &quot;10.60.40.10&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; port&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;= 53&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; ]&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; metadata = {&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; key1 = &quot;value1&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; ]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1630" y="445" width="220" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-19" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="470" width="20" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="6pMj0P4uRG38Op1eCEmC-21" value="Module DNS Private Resolver" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="405" width="260" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

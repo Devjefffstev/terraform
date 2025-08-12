@@ -1,0 +1,109 @@
+formatter: markdown table
+version: ""
+header-from: main.tf
+footer-from: ""
+
+sections:
+  hide: []
+  show: []
+
+  hide-all: false # deprecated in v0.13.0, removed in v0.15.0
+  show-all: true  # deprecated in v0.13.0, removed in v0.15.0
+
+content:  |-
+  ```bash 
+  By setting the ARM_SUBSCRIPTION_ID environment variable, Terraform will automatically use it for the subscription_id in the azurerm provider block. ||  export ARM_SUBSCRIPTION_ID='xxxxx-xxxxx-xxxxx-xxxxx-xxxxx' 
+  ````
+  {{ .Header }}
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Resources }} 
+  {{ .Inputs }}
+  {{ .Modules }}
+  {{ .Outputs }}
+
+    
+  If you want to remove `resource_group_prop_all` you need to flat the map as `resource_group_example_single_resource_group`
+
+  ```hcl
+  + resource_group_example_single_resource_group_all  = {
+        + rg-dev-app  = {
+            + resource_group_prop_all = {
+                + id         = (known after apply)
+                + location   = "eastus"
+                + managed_by = null
+                + name       = "rg-dev-app"
+                + tags       = {
+                    + environment = "development"
+                    + team        = "app-team"
+                  }
+                + timeouts   = null
+              }
+          }
+        + rg-dev-db   = {
+            + resource_group_prop_all = {
+                + id         = (known after apply)
+                + location   = "westus"
+                + managed_by = null
+                + name       = "rg-dev-db"
+                + tags       = null
+                + timeouts   = null
+              }
+          }
+        + rg-prod-app = {
+            + resource_group_prop_all = {
+                + id         = (known after apply)
+                + location   = "eastus"
+                + managed_by = null
+                + name       = "rg-prod-app"
+                + tags       = {
+                    + environment = "production"
+                    + team        = "app-team"
+                  }
+                + timeouts   = null
+              }
+          }
+        + rg-prod-db  = {
+            + resource_group_prop_all = {
+                + id         = (known after apply)
+                + location   = "westus"
+                + managed_by = null
+                + name       = "rg-prod-db"
+                + tags       = {
+                    + environment = "production"
+                    + team        = "db-team"
+                  }
+                + timeouts   = null
+              }
+          }
+      }
+      ``` 
+  {{ .Footer }}
+
+output:
+  file: README.howtouse.azure.rg.md
+  mode: inject
+  
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

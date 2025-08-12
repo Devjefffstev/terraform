@@ -1,0 +1,88 @@
+name: release-please-terraform-modules
+
+on: 
+  workflow_call: 
+    inputs:
+      config-file:
+        required: false
+        type: string
+      manifest-file:
+        required: false
+        type: string     
+      repo-url:
+        required: false
+        type: string
+      branch:
+        required: false
+        type: string
+        default: main
+      skip-github-release:
+        required: false
+        type: boolean
+        default: false
+      skip-github-pull-request:
+        required: false
+        type: boolean
+        default: false
+      path:
+        required: false
+        type: string
+        default: modules
+      release-type: 
+        required: false
+        type: string
+      package-name:
+        required: false
+        type: string
+      include-v-in-tag:
+        required: false
+        type: boolean
+        default: true
+      include-component-in-tag:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      secret_github_token:
+        description: 'GitHub token with permissions to create releases'
+        
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  issues: write
+
+jobs:
+  release-please-template:
+    name: release-please-template  
+    runs-on: ubuntu-latest  
+    outputs:
+      release_outputs: steps.release-please-package.outputs      
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: tree folders
+        run: |
+          tree -L 3
+
+      - uses: googleapis/release-please-action@v4
+        id: release-please-package
+        with:
+          token: ${{ secrets.secret_github_token }}
+          # config-file: ${{ inputs.config-file }}
+          # manifest-file: ${{ inputs.manifest-file}}
+          #repo-url: "${{ inputs.repo-url }}/${{ inputs.branch }}"
+          target-branch: ${{ inputs.branch }}
+          skip-github-release: ${{ inputs.skip-github-release }}
+          skip-github-pull-request: ${{ inputs.skip-github-pull-request }}
+          path: ${{ inputs.path }}
+          release-type: ${{ inputs.release-type}}
+          # package-name: ${{ inputs.path }}
+          # include-v-in-tag: ${{ inputs.include-v-in-tag }}
+          include-component-in-tag: ${{ inputs.include-component-in-tag }}
+          # monorepo-tags: true
+      - name: Print release information
+        continue-on-error: true
+        run: |
+          echo "Release Outputs"
+          echo "Release Info: ${{ toJson(steps.release-please-package.outputs) }}"

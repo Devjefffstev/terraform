@@ -1,0 +1,37 @@
+name: 'Release Please Module'
+
+on: 
+  push: 
+    branches:
+      - main
+      - dev
+      - 'workflow**' 
+    # paths:
+    #   - 'modules/**'
+    
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  issues: write
+
+
+jobs:
+  package-release-please:
+    name: package-release-please    
+    uses: ./.github/workflows/release-please-tmpl.yml    
+    with:
+      config-file: modules/release-please-config.json
+      manifest-file: modules/.release-please-manifest.json
+      # release-type: terraform-module
+      repo-url: ${{ github.repository }}
+      branch: ${{ github.ref_name }} 
+      skip-github-release: false
+      skip-github-pull-request: false
+      path: modules
+    secrets: 
+        secret_github_token: ${{ secrets.GITHUB_TOKEN }}
+  
+
+
