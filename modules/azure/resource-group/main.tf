@@ -6,3 +6,5 @@ resource "azurerm_resource_group" "main_for_each" {
 }
 
 
+
+

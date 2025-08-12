@@ -21,8 +21,8 @@ jobs:
     name: package-release-please    
     uses: ./.github/workflows/release-please-tmpl.yml    
     with:
-      config-file: modules/release-please-config.json
-      manifest-file: modules/.release-please-manifest.json
+    #   config-file: modules/release-please-config.json
+    #   manifest-file: modules/.release-please-manifest.json
       repo-url: ${{ github.repository }}
       branch: ${{ github.ref_name }} 
       skip-github-release: false
