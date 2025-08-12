@@ -1,15 +1,15 @@
 name: Release please workflow Iterate
 
 on:
-  pull_request:
-    branches: [ "main", "master**" ]
-    paths:
-      - modules/**
+  # pull_request:
+  #   branches: [ "main", "master**" ]
+  #   paths:
+  #     - modules/**
   push:
     branches:
       - main
       - dev
-      - "master**"
+      - "master-main"
     paths:
       - modules/**
 
