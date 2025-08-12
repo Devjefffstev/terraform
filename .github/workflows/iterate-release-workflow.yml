@@ -62,3 +62,23 @@ jobs:
     needs: find-release-changes
     steps:
       - run: echo ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
+
+  package-release-please:
+    name: package-release-please    
+    uses: ./.github/workflows/release-please-tmpl.yml    
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
+    with:
+    #   config-file: modules/release-please-config.json
+    #   manifest-file: modules/.release-please-manifest.json
+      release-type: terraform-module
+      repo-url: ${{ github.repository }}
+      branch: ${{ github.ref_name }} 
+      skip-github-release: false
+      skip-github-pull-request: false
+      path: modules/${{ matrix.module }}
+      package-name: ${{ matrix.module }}    
+    secrets: 
+        secret_github_token: ${{ secrets.GITHUB_TOKEN }}

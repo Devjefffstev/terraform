@@ -66,6 +66,7 @@ jobs:
           skip-github-pull-request: ${{ inputs.skip-github-pull-request }}
           path: ${{ inputs.path }}
           release-type: ${{ inputs.release-type}}
+          package-name: ${{ inputs.path }}
       - name: Print release information
         continue-on-error: true
         run: |
