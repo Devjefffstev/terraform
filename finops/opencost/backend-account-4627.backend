@@ -1,0 +1,5 @@
+## variables for backend config in terraform for a S3 bucket
+    bucket = "terraform-opencost-4627"
+    key    = "opencost-4627.tfstate"
+    region = "us-east-1"
+    profile= "default"

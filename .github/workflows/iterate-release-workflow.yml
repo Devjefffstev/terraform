@@ -1,0 +1,104 @@
+name: Release please workflow Iterate
+
+on:
+  # pull_request:
+  #   branches: [ "main", "master**" ]
+  #   paths:
+  #     - modules/**
+  push:
+    branches:
+      - main
+      - dev
+      - "master-main"
+    paths:
+      - modules/**
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  issues: write
+
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PATH_PREFIX: modules/azure/
+  BRANCH_PREFIX: master-main
+
+jobs:
+  find-release-changes:
+    name: Change finder for modules folders
+    runs-on: ubuntu-latest
+    outputs:
+      module-paths: ${{ steps.change-finder.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install @octokit/action
+        name: Install Octokit
+      - id: change-finder
+        uses: actions/github-script@v6.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            const { Octokit } = require("@octokit/action");
+            const { execSync } = require('child_process');
+            const octokit = new Octokit()
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+            const branchPrefix = process.env.BRANCH_PREFIX;
+
+            const latestRelease = await octokit.request('GET /repos/{owner}/{repo}/releases/latest', {
+              owner: owner,
+              repo: repo,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
+            })
+            console.log(`latest release: ${JSON.stringify(latestRelease.data)}`);
+            execSync('git pull --tags');
+            const status = execSync(`git diff --name-only ${latestRelease.data.tag_name} origin/${branchPrefix}`, { encoding: 'utf-8'});
+            console.log("Status of changes since last release:");
+            console.log(status);
+            const changes = status.split('\n');
+            let modules_paths = new Set();
+            for (const change of changes) {
+              if (change.startsWith(process.env.PATH_PREFIX)) {
+                  const library = change.split('/')[2];
+                  modules_paths.add(library);
+              };
+            }
+            modules_paths = Array.from(modules_paths);
+            console.log("Modules paths with changes:");
+            console.log(modules_paths);
+            return modules_paths;
+            
+
+  validate-output:
+    runs-on: ubuntu-latest
+    needs: find-release-changes
+    steps:
+      - run: echo ${{toJson(needs.find-release-changes.outputs.module-paths)}}
+
+  package-release-please:
+    name: package-release-please
+    uses: ./.github/workflows/release-please-tmpl.yml
+    needs: find-release-changes
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
+    with:
+      #   config-file: modules/release-please-config.json
+      #   manifest-file: modules/.release-please-manifest.json
+      release-type: terraform-module
+      repo-url: ${{ github.repository }}
+
+      # branch: ${{ github.ref_name }}
+      branch: master-main
+
+      skip-github-release: false
+      skip-github-pull-request: false
+      path: modules/azure/${{ matrix.module }}
+      package-name: ${{ matrix.module }}
+    secrets:
+      secret_github_token: ${{ secrets.GITHUB_TOKEN }}
