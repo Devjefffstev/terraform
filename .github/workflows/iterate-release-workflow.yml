@@ -2,12 +2,14 @@ name: Release please workflow Iterate
 
 on:
   pull_request:
-    branches: [ "main", "workflow**" ]
-  # push:
-  #   branches:
-  #     - main
-  #     - dev
-  #     - "workflow**"
+    branches: [ "main", "master**" ]
+    paths:
+      - modules/**
+  push:
+    branches:
+      - main
+      - dev
+      - "master**"
     paths:
       - modules/**
 
@@ -89,7 +91,7 @@ jobs:
       repo-url: ${{ github.repository }}
 
       # branch: ${{ github.ref_name }}
-      branch: workflow-iteration-release-please
+      branch: master-main
 
       skip-github-release: false
       skip-github-pull-request: false
