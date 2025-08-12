@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
+        module: ${{toJson(needs.find-release-changes.outputs.module-paths)}}
     with:
     #   config-file: modules/release-please-config.json
     #   manifest-file: modules/.release-please-manifest.json
