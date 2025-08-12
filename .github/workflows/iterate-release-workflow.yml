@@ -62,7 +62,9 @@ jobs:
             modules_paths = Array.from(modules_paths);
             console.log("Modules paths with changes:");
             console.log(modules_paths);
-            return modules_paths;
+            #return modules_paths;
+              // Set the output explicitly
+            core.setOutput("result", JSON.stringify(modules_paths));
 
   validate-output:
     runs-on: ubuntu-latest
@@ -76,7 +78,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{toJson(needs.find-release-changes.outputs.module-paths)}}
+        module: ${{ fromJSON(needs.find-release-changes.outputs.module-paths) }}
+    if: ${{ matrix.include != '' }}
     with:
     #   config-file: modules/release-please-config.json
     #   manifest-file: modules/.release-please-manifest.json
