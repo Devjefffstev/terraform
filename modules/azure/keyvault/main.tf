@@ -22,6 +22,7 @@ resource "azurerm_key_vault" "main" {
   }
 }
 
+
 resource "azurerm_key_vault_secret" "main" {
   for_each     = var.keyvault_objects
   name         = each.key

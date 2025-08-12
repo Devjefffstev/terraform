@@ -88,7 +88,7 @@ jobs:
       branch: ${{ github.ref_name }}
       skip-github-release: false
       skip-github-pull-request: false
-      path: modules/azure/{{ matrix.module }}
+      path: modules/azure/${{ matrix.module }}
       package-name: ${{ matrix.module }}
     secrets:
       secret_github_token: ${{ secrets.GITHUB_TOKEN }}
