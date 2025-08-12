@@ -85,7 +85,8 @@ jobs:
       #   manifest-file: modules/.release-please-manifest.json
       release-type: terraform-module
       repo-url: ${{ github.repository }}
-      branch: ${{ github.ref_name }}
+      # branch: ${{ github.ref_name }}
+      branch: workflow-iteration-release-please
       skip-github-release: false
       skip-github-pull-request: false
       path: modules/azure/${{ matrix.module }}
