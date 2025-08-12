@@ -6,13 +6,11 @@
     "tag-separator": "@",
     "release-type": "terraform-module",
     "packages": {
-        "modules/azure/resource-group": {            
-            "path": "modules/azure/resource-group",
+        "modules/azure/resource-group": {                        
             "component": "resource-group-component",
             "package-name": "package-azure-resource-group"
         },
-        "modules/azure/aks": {
-            "path": "modules/azure/aks",
+        "modules/azure/aks": {            
             "component": "aks-component",
             "package-name": "package-azure-aks"
         }
