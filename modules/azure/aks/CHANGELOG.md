@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.6.0...aks-component@v0.7.0) (2025-08-12)
+
+
+### Features
+
+* blank spaces ([51a8b06](https://github.com/Devjefffstev/terraform/commit/51a8b062f0186835d0a39cb4ae6f6dcbc14cd705))
+
 ## [0.6.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.5.0...aks-component@v0.6.0) (2025-08-12)
 
 
