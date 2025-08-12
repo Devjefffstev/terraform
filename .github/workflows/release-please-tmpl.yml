@@ -16,6 +16,10 @@ on:
         required: false
         type: string
         default: main
+      skip-github-release:
+        required: false
+        type: boolean
+        default: false
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -47,6 +51,7 @@ jobs:
           manifest-file: ${{ inputs.manifest-file}}
           #repo-url: "${{ inputs.repo-url }}/${{ inputs.branch }}"
           target-branch: ${{ inputs.branch }}
+          skip-github-release: ${ inputs.skip-github-release }
       - name: Print release information
         continue-on-error: true
         run: |
