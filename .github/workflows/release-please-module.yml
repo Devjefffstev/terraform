@@ -27,6 +27,7 @@ jobs:
       branch: release-please-config
       skip-github-release: false
       skip-github-pull-request: false
+      path: modules
     secrets: 
         secret_github_token: ${{ secrets.GITHUB_TOKEN }}
      
