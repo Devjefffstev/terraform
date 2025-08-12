@@ -28,6 +28,9 @@ on:
         required: false
         type: string
         default: modules
+      release-type: 
+        required: false
+        type: string
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -62,6 +65,7 @@ jobs:
           skip-github-release: ${{ inputs.skip-github-release }}
           skip-github-pull-request: ${{ inputs.skip-github-pull-request }}
           path: ${{ inputs.path }}
+          release-type: ${{ inputs.release-type}}
       - name: Print release information
         continue-on-error: true
         run: |

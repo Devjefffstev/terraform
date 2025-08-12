@@ -23,6 +23,7 @@ jobs:
     with:
     #   config-file: modules/release-please-config.json
     #   manifest-file: modules/.release-please-manifest.json
+      release-type: terraform-module
       repo-url: ${{ github.repository }}
       branch: ${{ github.ref_name }} 
       skip-github-release: false
