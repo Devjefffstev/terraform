@@ -15,3 +15,5 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
   tags = var.tags
 }
+
+
