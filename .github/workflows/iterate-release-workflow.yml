@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - 'workflow**' 
+      - "workflow**"
     # paths:
     #   - modules/**
 
@@ -14,6 +14,7 @@ permissions:
   pull-requests: write
   id-token: write
   issues: write
+
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,7 +33,7 @@ jobs:
       - id: change-finder
         uses: actions/github-script@v6.4.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const { Octokit } = require("@octokit/action");
@@ -63,6 +64,7 @@ jobs:
             console.log("Modules paths with changes:");
             console.log(modules_paths);
             return modules_paths;
+            
 
   validate-output:
     runs-on: ubuntu-latest
@@ -71,22 +73,22 @@ jobs:
       - run: echo ${{toJson(needs.find-release-changes.outputs.module-paths)}}
 
   package-release-please:
-    name: package-release-please    
-    uses: ./.github/workflows/release-please-tmpl.yml  
+    name: package-release-please
+    uses: ./.github/workflows/release-please-tmpl.yml
     needs: find-release-changes
     strategy:
       fail-fast: false
       matrix:
         module: ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
     with:
-    #   config-file: modules/release-please-config.json
-    #   manifest-file: modules/.release-please-manifest.json
+      #   config-file: modules/release-please-config.json
+      #   manifest-file: modules/.release-please-manifest.json
       release-type: terraform-module
       repo-url: ${{ github.repository }}
-      branch: ${{ github.ref_name }} 
+      branch: ${{ github.ref_name }}
       skip-github-release: false
       skip-github-pull-request: false
-      path: ${{env.PATH_PREFIX}}${{ matrix.module }}
-      package-name: ${{ matrix.module }}    
-    secrets: 
-        secret_github_token: ${{ secrets.GITHUB_TOKEN }}
+      path: modules/azure/{{ matrix.module }}
+      package-name: ${{ matrix.module }}
+    secrets:
+      secret_github_token: ${{ secrets.GITHUB_TOKEN }}
