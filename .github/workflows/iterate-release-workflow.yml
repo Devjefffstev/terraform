@@ -1,6 +1,8 @@
 name: Release please workflow Iterate
 
 on:
+  pull_request:
+    branches: [ "main", "workflow**" ]
   push:
     branches:
       - main
