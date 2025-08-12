@@ -1,4 +1,4 @@
 {
   "modules/azure/resource-group": "1.4.0",
-  "modules/azure/aks": "0.4.0"
+  "modules/azure/aks": "0.5.0"
 }
