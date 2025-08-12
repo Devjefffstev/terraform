@@ -15,6 +15,10 @@ permissions:
   id-token: write
   issues: write
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PATH_PREFIX: modules/azure
+
 jobs:
   find-release-changes:
     name: Change finder for modules folders
@@ -50,7 +54,7 @@ jobs:
             const changes = status.split('\n');
             let modules_paths = new Set();
             for (const change of changes) {
-              if (change.startsWith('modules/')) {
+              if (change.startsWith(process.env.PATH_PREFIX)) {
                   const library = change.split('/')[1];
                   modules_paths.add(library);
               };
