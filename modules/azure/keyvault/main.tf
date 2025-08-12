@@ -20,7 +20,6 @@ resource "azurerm_key_vault" "main" {
     }
 
   }
-
 }
 
 resource "azurerm_key_vault_secret" "main" {
