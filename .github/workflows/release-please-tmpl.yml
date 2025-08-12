@@ -58,8 +58,8 @@ jobs:
         id: release-please-package
         with:
           token: ${{ secrets.secret_github_token }}
-          # config-file: ${{ inputs.config-file }}
-          # manifest-file: ${{ inputs.manifest-file}}
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file}}
           #repo-url: "${{ inputs.repo-url }}/${{ inputs.branch }}"
           target-branch: ${{ inputs.branch }}
           skip-github-release: ${{ inputs.skip-github-release }}
