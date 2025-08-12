@@ -44,7 +44,8 @@ jobs:
             })
             console.log(`latest release: ${JSON.stringify(latestRelease.data)}`);
             execSync('git pull --tags');
-            const status = execSync(`git diff --name-only ${latestRelease.data.tag_name} origin/${{ github.ref_name }}`, { encoding: 'utf-8'});
+            const status = execSync(`git diff --name-only ${latestRelease.data.tag_name} origin/main`, { encoding: 'utf-8'});
+            console.log("Status of changes since last release:");
             console.log(status);
             const changes = status.split('\n');
             let modules_paths = new Set();
@@ -55,6 +56,7 @@ jobs:
               };
             }
             modules_paths = Array.from(modules_paths);
+            console.log("Modules paths with changes:");
             console.log(modules_paths);
             return modules_paths;
 
