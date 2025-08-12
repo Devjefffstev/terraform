@@ -8,3 +8,4 @@ output "output_keyvault_secret_info" {
   sensitive   = true
 }
 
+
