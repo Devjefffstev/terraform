@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/Devjefffstev/terraform/compare/v0.1.0...v0.2.0) (2025-08-12)
+
+
+### Features
+
+* two blank space aks ([#39](https://github.com/Devjefffstev/terraform/issues/39)) ([0566ab2](https://github.com/Devjefffstev/terraform/commit/0566ab20740ea23ef7fae80ddf45fe503b58c099))
+* two blank space aks ([#40](https://github.com/Devjefffstev/terraform/issues/40)) ([6cb51f5](https://github.com/Devjefffstev/terraform/commit/6cb51f5e7626576fccd3d11fa1756e358f24bd26))
+
 ## 0.1.0 (2025-08-12)
 
 
