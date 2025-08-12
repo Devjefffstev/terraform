@@ -72,7 +72,8 @@ jobs:
 
   package-release-please:
     name: package-release-please    
-    uses: ./.github/workflows/release-please-tmpl.yml    
+    uses: ./.github/workflows/release-please-tmpl.yml  
+    needs: find-release-changes
     strategy:
       fail-fast: false
       matrix:
