@@ -31,6 +31,9 @@ on:
       release-type: 
         required: false
         type: string
+      package-name:
+        required: false
+        type: string
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
