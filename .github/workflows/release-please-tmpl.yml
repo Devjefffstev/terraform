@@ -34,6 +34,14 @@ on:
       package-name:
         required: false
         type: string
+      include-v-in-tag:
+        required: false
+        type: boolean
+        default: true
+      include-component-in-tag:
+        required: false
+        type: boolean
+        default: false
     secrets:
       secret_github_token:
         description: 'GitHub token with permissions to create releases'
@@ -70,6 +78,8 @@ jobs:
           path: ${{ inputs.path }}
           release-type: ${{ inputs.release-type}}
           package-name: ${{ inputs.path }}
+          include-v-in-tag: ${{ inputs.include-v-in-tag }}
+          include-component-in-tag: ${{ inputs.include-component-in-tag }}
       - name: Print release information
         continue-on-error: true
         run: |
