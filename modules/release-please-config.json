@@ -13,6 +13,10 @@
         "modules/azure/aks": {            
             "component": "aks-component",
             "package-name": "package-azure-aks"
+        },
+        "modules/azure/keyvault": {            
+            "component": "kv-component",
+            "package-name": "package-azure-kv"
         }
     }
 }
