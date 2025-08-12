@@ -62,7 +62,7 @@ jobs:
             modules_paths = Array.from(modules_paths);
             console.log("Modules paths with changes:");
             console.log(modules_paths);
-            #return modules_paths;
+    
               // Set the output explicitly
             core.setOutput("result", JSON.stringify(modules_paths));
 
