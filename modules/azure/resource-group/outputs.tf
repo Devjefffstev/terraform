@@ -8,3 +8,5 @@ output "resource_group_names" {
 }
 
 
+
+
