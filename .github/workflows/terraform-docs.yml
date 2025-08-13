@@ -38,6 +38,12 @@ jobs:
             const paths = "${{ steps.changed-files.outputs.all_modified_files }}";
             const regex = /${prefix_path}\/([^/]+)/g;
             const matches = paths.match(regex);
+            
+            console.log(`prefix_path: ${prefix_path}`);
+            console.log(`regex: ${regex}`);
+            console.log(`Paths: ${paths}`);
+            console.log(`Found matches: ${matches}`);
+            
             if (!matches) {
               return [];
             }
