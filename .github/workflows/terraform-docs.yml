@@ -58,7 +58,7 @@ jobs:
 
   validate-output:
     runs-on: ubuntu-latest
-    needs: find-release-changes
+    needs: find-changes
     steps:
      - run: ${{ needs.find-changes.outputs.changed-modules }}
 
