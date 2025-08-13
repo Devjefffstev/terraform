@@ -58,12 +58,10 @@ jobs:
 
   validate-output:
     runs-on: ubuntu-latest
-    needs: find-changes
-    strategy:
-      matrix:
-        module: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
+    needs: find-release-changes
     steps:
-      - run: echo  ${{ matrix.module }}
+     - run: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
+
 
   update-readme:
     name: Update README for changed modules
