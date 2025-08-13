@@ -50,6 +50,12 @@ jobs:
             console.log(uniqueModuleNames);
             return uniqueModuleNames;
 
+  validate-output:
+    runs-on: ubuntu-latest
+    needs: find-changes
+    steps:
+      - run: echo ${{toJson(steps.changed-modules.outputs.result)}}
+
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
