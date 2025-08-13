@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: find-changes
     steps:
-      - run: echo ${{toJson(steps.changed-modules.outputs.result)}}
+      - run: echo ${{toJson(needs.find-changes.outputs.changed-modules)}}
 
   update-readme:
     name: Update README for changed modules
