@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: find-release-changes
     steps:
-     - run: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
+     - run: ${{ needs.find-changes.outputs.changed-modules }}
 
 
   update-readme:
