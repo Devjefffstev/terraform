@@ -13,3 +13,7 @@ variable "aws_profile" {
   type        = string
   default     = "default"
 }
+variable "principal_arn_user" {
+  description = "The ARN of the user to bind the role to"
+  type        = string
+}
