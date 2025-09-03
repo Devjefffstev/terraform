@@ -1,6 +1,6 @@
 locals {
-  var=2
-  
+  var = 2
+
 }
 
 
