@@ -1,0 +1,34 @@
+name: Grant Storage Blob Contributor Role
+
+on:
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  grant-role:
+    runs-on: ubuntu-latest
+    environment: sandbox
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Assign Storage Blob Contributor Role
+        run: |
+          echo "Assigning role to managed identity $TARGET_MI_ID on $STORAGE_ID"
+
+          az role assignment create --assignee 9123365d-6843-46e8-b249-bd906a99ce04 --role "Storage Blob Data Contributor" --scope /subscriptions/ae8fb469-4dad-482c-80e7-00bde08748b1/resourceGroups/rg-nomad-eus-sbx/providers/Microsoft.Storage/storageAccounts/sanomadsbxuse01
