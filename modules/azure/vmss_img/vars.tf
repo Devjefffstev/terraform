@@ -229,6 +229,7 @@ variable "os_profile" {
       admin_username                  = string
       computer_name_prefix            = optional(string)
       disable_password_authentication = optional(bool)
+      user_data_base64                = optional(string)
       patch_assessment_mode           = optional(string)
       patch_mode                      = optional(string, "AutomaticByPlatform")
       provision_vm_agent              = optional(bool, true)
@@ -335,8 +336,7 @@ variable "source_image_id" {
 It can be either:
 
   - (Optional) The ID of an Image which each Virtual Machine in this Scale Set should be based on. Possible Image ID types include Image IDs, Shared Image IDs, Shared Image Version IDs, Community Gallery Image IDs, Community Gallery Image Version IDs, Shared Gallery Image IDs and Shared Gallery Image Version IDs..
-  - If it is not defined, it will create an Azure Image Gallery and take the latest version of the image from a Shared Image Gallery. That means this variable triggers the creation of a Shared Image Gallery. You must provide the values for `image_galleries` variable.
-  
+  - If it is not defined, it will create an Azure Image Gallery and take the latest version of the image from the first Shared Image Gallery Created. That means this variable triggers the creation of a Shared Image Gallery. You must provide the values for `image_galleries` variable.
 
 EOF
   default     = null
@@ -419,6 +419,17 @@ variable "image_galleries" {
     location            = optional(string)
     resource_group_name = optional(string)
     shared_image_definitions = list(object({
+      name = string
+      # Define the source and version from your image. Use Packer to create a custom image and push it to a Shared Image Gallery.
+      image_version = list(object({
+        image_name       = string
+        managed_image_id = optional(string)
+        target_region = object({
+          name                   = string
+          regional_replica_count = string
+          storage_account_type   = string
+        })
+      }))
       identifier = object({
         publisher = string
         offer     = string
@@ -448,6 +459,6 @@ variable "image_galleries" {
       tags                                = optional(map(string))
   })) }))
   description = "Properties for VMSS Image Gallery"
-  default     = {}
+  default     = null
 
 }
