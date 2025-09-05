@@ -229,7 +229,7 @@ variable "os_profile" {
       admin_username                  = string
       computer_name_prefix            = optional(string)
       disable_password_authentication = optional(bool)
-      user_data_base64                = optional(string)
+      user_data_base64                = optional(string)      
       patch_assessment_mode           = optional(string)
       patch_mode                      = optional(string, "AutomaticByPlatform")
       provision_vm_agent              = optional(bool, true)
