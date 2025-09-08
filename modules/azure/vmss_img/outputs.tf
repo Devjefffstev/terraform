@@ -20,15 +20,15 @@ output "list_images_create_vmss_with_this_image_true" {
 }
 
 # Outputs for the resources created
-output "vmss_id" {
+output "vmss_prop" {
   value = module.vmss
 
 }
-output "compute_gallery_id" {
-  value = module.compute_gallery    
+output "compute_gallery_prop" {
+  value = module.compute_gallery
 }
-output "azurerm_shared_image_version_id" {
+output "azurerm_shared_image_version_prop" {
   value = azurerm_shared_image_version.this
-  
+
 }
   

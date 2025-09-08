@@ -10,9 +10,9 @@ locals {
       }
     ) }
   ) : {}
-  source_image_id = var.source_image_id == null && var.source_image_reference == null ? try(azurerm_shared_image_version.this[local.image_selected].id,"") : var.source_image_id
+  source_image_id = var.source_image_id == null && var.source_image_reference == null ? try(azurerm_shared_image_version.this[local.image_selected].id, "") : var.source_image_id
 
-  image_selected = try(coalesce(local.image_source_list_create_vmss_with_this_image_true...),"")
+  image_selected = try(coalesce(local.image_source_list_create_vmss_with_this_image_true...), "")
 
   image_source_list_create_vmss_with_this_image_true = var.source_image_id == null && var.source_image_reference == null ? keys(
     {
