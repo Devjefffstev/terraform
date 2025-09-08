@@ -331,12 +331,12 @@ variable "sku_name" {
 
 }
 variable "source_image_id" {
-  type        = any
+  type        = string
   description = <<EOF
 It can be either:
 
   - (Optional) The ID of an Image which each Virtual Machine in this Scale Set should be based on. Possible Image ID types include Image IDs, Shared Image IDs, Shared Image Version IDs, Community Gallery Image IDs, Community Gallery Image Version IDs, Shared Gallery Image IDs and Shared Gallery Image Version IDs..
-  - If it is not defined, it will create an Azure Image Gallery and take the latest version of the image from the first Shared Image Gallery Created. That means this variable triggers the creation of a Shared Image Gallery. You must provide the values for `image_galleries` variable.
+  - If it is not defined, it will create an Azure Image Gallery and take the version of the image from the Shared Image Gallery Created passing this var `create_vmss_with_this_image` true. You must provide the values for `image_galleries` variable.
 
 EOF
   default     = null
