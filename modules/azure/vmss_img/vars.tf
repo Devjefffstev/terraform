@@ -229,7 +229,7 @@ variable "os_profile" {
       admin_username                  = string
       computer_name_prefix            = optional(string)
       disable_password_authentication = optional(bool)
-      user_data_base64                = optional(string)      
+      user_data_base64                = optional(string)
       patch_assessment_mode           = optional(string)
       patch_mode                      = optional(string, "AutomaticByPlatform")
       provision_vm_agent              = optional(bool, true)
@@ -422,8 +422,9 @@ variable "image_galleries" {
       name = string
       # Define the source and version from your image. Use Packer to create a custom image and push it to a Shared Image Gallery.
       image_version = list(object({
-        image_name       = string
-        managed_image_id = optional(string)
+        create_vmss_with_this_image = optional(bool, false)
+        image_name                  = string
+        managed_image_id            = optional(string)
         target_region = object({
           name                   = string
           regional_replica_count = string

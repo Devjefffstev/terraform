@@ -10,9 +10,19 @@ locals {
       }
     ) }
   ) : {}
-  source_image_id = var.source_image_id == null && var.source_image_reference == null ?  azurerm_shared_image_version.this[keys(local.images_definition)[0]].id: var.source_image_id
+  source_image_id = var.source_image_id == null && var.source_image_reference == null ? azurerm_shared_image_version.this[local.image_selected].id : var.source_image_id
 
- images_definition = var.source_image_id == null && var.source_image_reference == null ? {
+  image_selected = coalesce(local.image_source_list_create_vmss_with_this_image_true...)
+
+  image_source_list_create_vmss_with_this_image_true = var.source_image_id == null && var.source_image_reference == null ? keys(
+    {
+      for k, v in local.images_definition : k => v
+      if try(v.create_vmss_with_this_image, false)
+    }
+  ) : []
+
+
+  images_definition = var.source_image_id == null && var.source_image_reference == null ? {
     for v in flatten(
       [
         for key_gallery, gallery in local.shared_image_galleries : [

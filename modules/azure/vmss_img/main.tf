@@ -6,7 +6,7 @@ module "compute_gallery" {
   resource_group_name = each.value.resource_group_name
   # Optional
   shared_image_definitions = each.value.shared_image_definitions
-  
+
 }
 
 resource "azurerm_shared_image_version" "this" {
@@ -17,7 +17,7 @@ resource "azurerm_shared_image_version" "this" {
   resource_group_name = each.value.resource_group_name
   location            = try(each.value.location, var.location)
   managed_image_id    = try(each.value.managed_image_id, null)
-  
+
 
   target_region {
     name                   = each.value.location
@@ -73,6 +73,6 @@ module "vmss" {
   zone_balance                  = var.zone_balance
   zones                         = var.zones
 
-  depends_on = [module.compute_gallery]
+  depends_on = [module.compute_gallery, azurerm_shared_image_version.this]
 
 }
