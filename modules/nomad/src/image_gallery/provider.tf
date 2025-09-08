@@ -7,19 +7,19 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    use_oidc         = true
-    use_azuread_auth = true
-  }
+  # backend "azurerm" {
+  #   use_oidc         = true
+  #   use_azuread_auth = true
+  # }
 
 }
 
 provider "azurerm" {
   subscription_id                 = var.subscription_id
-  client_id                       = var.client_id
-  storage_use_azuread             = true
-  resource_provider_registrations = "none"
-  use_oidc                        = true
+  # client_id                       = var.client_id
+  # # storage_use_azuread             = true
+  # resource_provider_registrations = "none"
+  # use_oidc                        = true
 
   features {
     resource_group {

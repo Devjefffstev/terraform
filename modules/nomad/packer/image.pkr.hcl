@@ -15,7 +15,7 @@ source "azure-arm" "hashistack" {
   image_sku          = "22_04-lts-gen2"
 
   shared_image_gallery_destination {
-    subscription         = "ae8fb469-4dad-482c-80e7-00bde08748b1"
+    subscription         = "4ccb67b6-0e4c-45c5-88bf-ba71125163e1"
     resource_group       = "rg-nomad-eus-sbx"
     gallery_name         = "nomadeussbxgall"
     image_name           = "nomad"

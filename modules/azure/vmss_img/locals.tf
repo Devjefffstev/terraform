@@ -10,7 +10,7 @@ locals {
       }
     ) }
   ) : {}
-  source_image_id = azurerm_shared_image_version.this[keys(local.images_definition)[0]].id
+  source_image_id = var.source_image_id == null && var.source_image_reference == null ?  azurerm_shared_image_version.this[keys(local.images_definition)[0]].id: var.source_image_id
 
  images_definition = var.source_image_id == null && var.source_image_reference == null ? {
     for v in flatten(
@@ -31,16 +31,4 @@ locals {
     ) : "${v.image_def_name}-${v.name}" => v
   } : {}
 
-}
-
-output "shared_image_galleries" {
-  value = local.shared_image_galleries
-  
-}
-output "source_image_id" {
-  value = local.source_image_id
-  
-}
-output "images_definition" {
-  value = local.images_definition
 }
