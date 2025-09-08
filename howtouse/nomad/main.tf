@@ -1,11 +1,11 @@
 # To run this example for first time you must first run a plan targeting the data source to ensure the image is created before applying the VMSS module
-# terraform plan -out='plan' -var-file='example_vars/example_on_vmss_and_one_compute_gallery.tfvars' -target=data.azurerm_image.latest_nomad_image; terraform apply "plan"
+# terraform plan -out='plan' -var-file='example_vars/example.tfvars' -target=data.azurerm_image.latest_nomad_image; terraform apply "plan"
 
 # Then you can run the full apply
-# terraform plan -out='plan' -var-file='example_vars/example_on_vmss_and_one_compute_gallery.tfvars'; terraform apply "plan"
+# terraform plan -out='plan' -var-file='example_vars/example.tfvars'; terraform apply "plan"
 
 # If you want to force the recreation of the image you can set the variable create_packer_image to true in the tfvars file targeting the data source first and then run the full apply
-# terraform plan -out='plan' -var-file='example_vars/example_on_vmss_and_one_compute_gallery.tfvars' -var='create_packer_image=true'; terraform apply "plan"
+# terraform plan -out='plan' -var-file='example_vars/example.tfvars' -var='create_packer_image=true'; terraform apply "plan"
 
 
 module "example_on_vmss_and_one_compute_gallery" {
@@ -100,9 +100,10 @@ locals {
   }
 }
 
-# output "module" {
-#   value = module.example_on_vmss_and_one_compute_gallery
-# }
+output "module" {
+  value = module.example_on_vmss_and_one_compute_gallery
+  sensitive = true
+}
 output "network_interface" {
   value = local.network_interface
 

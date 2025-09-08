@@ -12,7 +12,7 @@ extension = [{
   failure_suppression_enabled = false
   settings                    = "{\"port\":80,\"protocol\":\"http\",\"requestPath\":\"/index.html\"}"
 }]
-instances = 3
+instances = 2
 network_interface = [{
   name = "VMSS-NIC"
   ip_configuration = [{
@@ -23,8 +23,7 @@ os_profile = {
   custom_data = "custom-data.yaml"
   linux_configuration = {
     disable_password_authentication = false
-    user_data_base64                = "user-data-server.sh"
-   
+    user_data_base64                = "user-data-server.sh"   
     admin_username                  = "azureuser"
     patch_mode                      = "ImageDefault"
   }
@@ -55,7 +54,16 @@ image_galleries = {
       }
       image_version = [
         {
-          image_name = "0.0.1"
+          image_name = "0.0.1"          
+          target_region = {
+            name                   = "East US"
+            regional_replica_count = 1
+            storage_account_type   = "Standard_LRS"
+          }
+        },
+        {
+          image_name = "0.0.2"
+          create_vmss_with_this_image = true
           target_region = {
             name                   = "East US"
             regional_replica_count = 1

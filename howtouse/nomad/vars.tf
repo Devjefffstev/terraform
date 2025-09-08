@@ -228,7 +228,7 @@ variable "os_disk" {
 
 }
 variable "os_profile" {
-  type = any
+  type        = any
   description = "(Optional) The OS Profile which should be used for the Virtual Machine Scale Set."
   default     = null
 
