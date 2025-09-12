@@ -73,6 +73,7 @@ jobs:
     name: Individual module review
     runs-on: ubuntu-latest
     needs: find-changes
+    environment: Reviewers
     strategy:      
       matrix: 
         module: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
