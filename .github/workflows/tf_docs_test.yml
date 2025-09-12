@@ -98,6 +98,7 @@ jobs:
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
+    environment: Reviewers
     needs: [find-changes, module-review]
     strategy:
       fail-fast: true
