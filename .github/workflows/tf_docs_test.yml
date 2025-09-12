@@ -110,7 +110,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Terraform
-        uses: ./.github/actions/setup-terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_hostname: app.terraform.io
           terraform_version: latest
