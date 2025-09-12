@@ -32,7 +32,6 @@ variables {
   }
 }
 
-
 run "plan_nsg" {
   command = plan
 
