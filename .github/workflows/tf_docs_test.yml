@@ -102,6 +102,9 @@ jobs:
     steps:
       - name: Azure login
         uses: azure/login@v2
+        env:
+          AZURE_LOGIN_PRE_CLEANUP: false
+          AZURE_LOGIN_POST_CLEANUP: false
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
