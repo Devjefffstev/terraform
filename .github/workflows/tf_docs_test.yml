@@ -16,21 +16,15 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PATH_PREFIX: modules
-
-  # Env variables used by terraform cli
   TF_INPUT: false
   TF_IN_AUTOMATION: true
   TF_LOG: INFO
-
-  # Terraform variables for azurerm provider confguration
-  TF_VAR_client_id: ${{ vars.APP_ID }}
-  TF_VAR_subscription_id: ${{ vars.SUBSCRIPTION_ID }}
-  TF_VAR_tenant_id: ${{ vars.TENANT_ID }}
-
-  # Env variables for AzureRM provider and backend
-  ARM_CLIENT_ID: ${{ vars.APP_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ vars.SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ vars.TENANT_ID }}
+  TF_VAR_client_id: ${{ secrets.APP_ID }}
+  TF_VAR_subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+  TF_VAR_tenant_id: ${{ secrets.TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.APP_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
 
 permissions:
   pull-requests: write
