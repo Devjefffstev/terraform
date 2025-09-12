@@ -39,23 +39,8 @@ permissions:
   id-token: write
 
 jobs:
-  config_az_cli:
-    environment: Reviewers   
-    runs-on: ubuntu-latest
-    steps:
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
-  find-changes:
-    environment: Reviewers   
+  find-changes:    
     name: Find in modules folder
     runs-on: ubuntu-latest
     outputs:
@@ -106,7 +91,7 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest
-    needs: [find-changes, config_az_cli]
+    needs: [find-changes]
     environment: Reviewers
     strategy:      
       matrix: 
@@ -115,6 +100,17 @@ jobs:
       run:
         working-directory: ${{ matrix.module }}
     steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Terraform
