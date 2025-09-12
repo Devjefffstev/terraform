@@ -50,10 +50,8 @@ module "vmss" {
 module "avm_res_network_networksecuritygroup" {
   source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version = "0.5.0"
-  # insert the 3 required variables here
   location = var.location
   name     = "nsg-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-001"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
   resource_group_name = var.resource_group_name
   security_rules      = local.nsg_rules
 }
