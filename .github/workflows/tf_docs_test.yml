@@ -1,4 +1,4 @@
-name: Terraform docs and test
+name: Terraform_docs_and_test
 
 on:
   workflow_dispatch:
