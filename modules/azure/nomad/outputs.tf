@@ -18,7 +18,6 @@ output "network_security_group_prop" {
 # Description: The ID of the Virtual Machine Scale Set.
 # resource_name
 # Description: The name of the Virtual Machine Scale Set.
-
 output "vmss_prop" {
   value = module.vmss
   sensitive = true
