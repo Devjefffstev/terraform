@@ -3,6 +3,7 @@ resource_group_name = "rg-nomad-test-001"
 location            = "East US"
 environment         = "test"
 app_function_chatam = "nomad"
+
 vmss_name = "vmss-nomad-one-and-one"
 # source_image_id="/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
 enable_telemetry = false
