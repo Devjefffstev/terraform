@@ -24,12 +24,12 @@ env:
   TF_LOG: INFO
 
   # Terraform variables for azurerm provider confguration
-  TF_VAR_client_id: ${{ vars.APP_ID }}
+  TF_VAR_client_id: ${{ vars.CLIENT_ID }}
   TF_VAR_subscription_id: ${{ vars.SUBSCRIPTION_ID }}
   TF_VAR_tenant_id: ${{ vars.TENANT_ID }}
 
   # Env variables for AzureRM provider and backend
-  ARM_CLIENT_ID: ${{ vars.APP_ID }}
+  ARM_CLIENT_ID: ${{ vars.CLIENT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ vars.SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ vars.TENANT_ID }}
 
@@ -124,7 +124,7 @@ jobs:
       - run: terraform init
       - run: terraform fmt 
       - run: terraform validate
-      - run: terraform test -verbose
+      - run: terraform test
   
   update-readme:
     name: Update README for changed modules
