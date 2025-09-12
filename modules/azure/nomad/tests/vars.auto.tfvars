@@ -1,6 +1,5 @@
 # Core required variables
-resource_group_name = "rg-nomad-test-001"
-location            = "East US"
+
 environment         = "test"
 app_function_chatam = "nomad"
 

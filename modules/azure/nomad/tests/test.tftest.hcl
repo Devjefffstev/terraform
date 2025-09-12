@@ -3,7 +3,7 @@
 # Add this at the beginning of your test file
 
 variable "subscription_id" {
-  type = string
+  type        = string
   description = "The Azure subscription ID for testing"
 }
 provider "azurerm" {
@@ -20,56 +20,50 @@ mock_provider "azurerm" {
   }
   mock_resource "azurerm_shared_image_version" {
     defaults = {
-      id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
+      id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image2"
     }
   }
+
 }
 
-variables {  
+
+variables {
+  resource_group_name = run.apply_infra_pre_req.resource_group_name
+  location            = run.apply_infra_pre_req.resource_group_location
   os_profile = {
-    custom_data      = base64encode(file("tests/custom-data.yaml"))
+    custom_data = base64encode(file("tests/custom-data.yaml"))
     linux_configuration = {
-    disable_password_authentication = false
-    # user_data_base64                = "user-data-server.sh"   
-    admin_username = "azureuser"
-    patch_mode     = "ImageDefault"
-    user_data_base64 = base64encode(file("tests/user-data-client.sh"))
-  }
+      disable_password_authentication = false
+      # user_data_base64                = "user-data-server.sh"   
+      admin_username   = "azureuser"
+      patch_mode       = "ImageDefault"
+      user_data_base64 = base64encode(file("tests/user-data-client.sh"))
+    }
   }
   network_interface = [
-  {
-    name = "VMSS-NIC"
-    ip_configuration = [{
-      name = "VMSS-IPConfig"
-      subnet_id=   "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
-    }]
-  }
-]
+    {
+      name = "VMSS-NIC"
+      ip_configuration = [{
+        name      = "VMSS-IPConfig"
+        subnet_id = run.apply_infra_pre_req.subnet_id
+      }]
+    }
+  ]
+source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image2"
 }
 
-run "plan_nsg" {
-  command = plan
+run "apply_infra_pre_req" {
+  command = apply
 
-  plan_options {
-    target = [module.avm-res-network-networksecuritygroup]
-  }
+
   module {
-    source = "./"
+    source = "./tests/infra_pre_req"
   }
 }
-run "plan_vmss" {
-  command = plan
-  plan_options {
-    target = [module.vmss]
-  }
-  module {
-    source = "./"
-  }
 
-}
 run "plan" {
   command = plan
- 
+
   module {
     source = "./"
   }
@@ -96,22 +90,18 @@ run "apply" {
   module {
     source = "./"
   }
- 
+
 
 }
 run "apply_real" {
   command = apply
   providers = {
     azurerm = azurerm
-  }
-   variables {
-
-    source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
-  }
+  }  
   module {
     source = "./"
   }
 
-  
+
 }
 
