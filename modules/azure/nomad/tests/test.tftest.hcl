@@ -39,6 +39,7 @@ run "plan_nsg" {
     source = "./"
   }
 }
+
 run "plan_vmss" {
   command = plan
   plan_options {
