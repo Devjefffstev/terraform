@@ -1,10 +1,8 @@
 ## Outputs for Module Network Security Group
 # name
 # Description: The name of the Network Security Group resource
-
 # resource
 # Description: The Network Security Group resource
-
 # resource_id
 # Description: The id of the Network Security Group resource
 output "network_security_group_prop" {
