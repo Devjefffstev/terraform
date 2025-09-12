@@ -26,7 +26,6 @@ mock_provider "azurerm" {
 
 }
 
-
 variables {
   resource_group_name = run.apply_infra_pre_req.resource_group_name
   location            = run.apply_infra_pre_req.resource_group_location
