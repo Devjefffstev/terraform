@@ -15,7 +15,6 @@ locals {
       }
     )
   }
-  
   #Default NSG Rules for Nomad Cluster
   nsg_rules = {
     "ssh_ingress" = {
