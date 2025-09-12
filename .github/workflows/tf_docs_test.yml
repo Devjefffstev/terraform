@@ -10,8 +10,8 @@ on:
         type: string
   
   push:        
-    # paths:
-    #   - modules/**
+    paths:
+      - modules/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
