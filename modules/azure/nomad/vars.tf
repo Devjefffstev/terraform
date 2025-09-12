@@ -1,8 +1,3 @@
-variable "subscription_id" {
-  type        = string
-  description = "(Optional) The Subscription ID which should be used for the AzureRM Provider."
-  default     = ""
-}
 variable "extension_protected_setting" {
   type        = map(string)
   description = "(Optional) A JSON String which specifies Sensitive Settings (such as Passwords) for the Extension."

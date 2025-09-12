@@ -1,9 +1,14 @@
 # Run terraform test -var-file=tests/vars.auto.testvars from the parent directory
 # Subscription ID is automatically read from TF_VAR_subscription_id environment variable
+# Add this at the beginning of your test file
 
+variable "subscription_id" {
+  type = string
+  description = "The Azure subscription ID for testing"
+}
 provider "azurerm" {
   features {}
-  subscription_id = var.subscription_id_test
+  subscription_id = var.subscription_id
 }
 
 mock_provider "azurerm" {
@@ -20,8 +25,7 @@ mock_provider "azurerm" {
   }
 }
 
-variables {
-  subscription_id_test = "xx" #change for real
+variables {  
   os_profile = {
     custom_data      = base64encode(file("tests/custom-data.yaml"))
     user_data_base64 = base64encode(file("tests/user-data-client.sh"))
@@ -39,7 +43,6 @@ run "plan_nsg" {
     source = "./"
   }
 }
-
 run "plan_vmss" {
   command = plan
   plan_options {
