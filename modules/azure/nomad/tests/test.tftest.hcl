@@ -5,6 +5,7 @@ provider "azurerm" {
   features {}
   subscription_id = var.subscription_id_test
 }
+
 mock_provider "azurerm" {
   alias = "fake"
   mock_resource "azurerm_subnet" {
