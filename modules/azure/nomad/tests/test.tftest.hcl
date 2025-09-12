@@ -28,8 +28,23 @@ mock_provider "azurerm" {
 variables {  
   os_profile = {
     custom_data      = base64encode(file("tests/custom-data.yaml"))
+    linux_configuration = {
+    disable_password_authentication = false
+    # user_data_base64                = "user-data-server.sh"   
+    admin_username = "azureuser"
+    patch_mode     = "ImageDefault"
     user_data_base64 = base64encode(file("tests/user-data-client.sh"))
   }
+  }
+  network_interface = [
+  {
+    name = "VMSS-NIC"
+    ip_configuration = [{
+      name = "VMSS-IPConfig"
+      subnet_id=   "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
+    }]
+  }
+]
 }
 
 run "plan_nsg" {
@@ -47,6 +62,14 @@ run "plan_vmss" {
   plan_options {
     target = [module.vmss]
   }
+  module {
+    source = "./"
+  }
+
+}
+run "plan" {
+  command = plan
+ 
   module {
     source = "./"
   }
@@ -73,10 +96,7 @@ run "apply" {
   module {
     source = "./"
   }
-  variables {
-
-    source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
-  }
+ 
 
 }
 run "apply_real" {
@@ -84,12 +104,14 @@ run "apply_real" {
   providers = {
     azurerm = azurerm
   }
+   variables {
+
+    source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
+  }
   module {
     source = "./"
   }
 
-  plan_options {
-    target = [module.avm-res-network-networksecuritygroup]
-  }
+  
 }
 
