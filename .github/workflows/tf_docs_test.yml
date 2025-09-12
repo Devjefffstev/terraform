@@ -43,7 +43,7 @@ jobs:
           script: |
             const prefix_path = process.env.PATH_PREFIX;
             const paths = "${{ steps.changed-files.outputs.all_modified_files }}";
-            const regex = /modules\/([^/]+)/g;
+            const regex = /modules\/([^/]+)\/([^/]+)/g;            
             const matches = paths.match(regex);
             
             console.log(`prefix_path: ${prefix_path}`);
