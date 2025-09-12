@@ -69,7 +69,32 @@ jobs:
     steps:
      - run: echo ${{ needs.find-changes.outputs.changed-modules }}
 
-
+  module-review:
+    name: Individual module review
+    runs-on: ubuntu-latest
+    needs: find-changes
+    strategy:      
+      matrix: 
+        module: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.module }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_hostname: app.terraform.io
+          terraform_version: latest
+          terraform_wrapper: false  # Disable the wrapper
+      - name: Check Pre-installed Terraform
+        run: terraform --version
+      - run: terraform init
+      - run: terraform fmt 
+      - run: terraform validate
+      - run: terraform test -verbose
+  
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
@@ -95,28 +120,3 @@ jobs:
           output-file: README.md
           output-method: inject
           git-push: "true"
-
-  module-review:
-    name: Individual module review
-    runs-on: ubuntu-latest
-    needs: find-changes
-    strategy:      
-      matrix: 
-        module: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
-    defaults:
-      run:
-        working-directory: ${{ matrix.module }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          cli_config_credentials_hostname: app.terraform.io
-          terraform_version: latest
-          terraform_wrapper: false  # Disable the wrapper
-      - name: Check Pre-installed Terraform
-        run: terraform --version
-      - run: terraform init
-      - run: terraform fmt 
-      - run: terraform validate
