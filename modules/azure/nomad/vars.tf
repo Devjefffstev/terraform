@@ -203,6 +203,7 @@ variable "network_interface" {
   description = "(Optional) One or more network interfaces to associate with the Virtual Machine Scale Set."
   default     = null
 }
+
 variable "os_disk" {
   type = object({
     caching                   = string
