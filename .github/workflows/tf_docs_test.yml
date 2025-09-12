@@ -8,11 +8,8 @@ on:
         required: false
         default: 'info'
         type: string
-  ## different branch from main in order to not trigger the workflow and generate docs before the PR is merged
-  push:
-    branches-ignore: 
-      - main
-      - modules    
+  
+  push:        
     paths:
       - modules/**
 
