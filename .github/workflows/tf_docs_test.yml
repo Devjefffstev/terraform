@@ -68,6 +68,7 @@ jobs:
     needs: find-changes
     steps:
      - run: echo ${{ needs.find-changes.outputs.changed-modules }}
+     - run: printenv
 
   module-review:
     name: Individual module review
