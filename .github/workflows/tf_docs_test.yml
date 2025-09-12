@@ -35,17 +35,18 @@ env:
 permissions:
   pull-requests: write
   contents: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  config_az_cli:
     runs-on: ubuntu-latest
     steps:
       - name: Azure login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.APP_ID }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ vars.APP_ID }}
+          tenant-id: ${{ vars.TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION_ID }}
 
       - name: Azure CLI script
         uses: azure/cli@v2
