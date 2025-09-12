@@ -1,6 +1,6 @@
 module "vmss" {
   source                        = "Azure/avm-res-compute-virtualmachinescaleset/azurerm"
-  version = "0.8.0"
+  version                       = "0.8.0"
   location                      = var.location
   extension_protected_setting   = var.extension_protected_setting
   name                          = var.vmss_name
@@ -24,7 +24,7 @@ module "vmss" {
   lock                          = var.lock
   managed_identities            = var.managed_identities
   max_bid_price                 = var.max_bid_price
-  network_interface             = var.network_interface
+  network_interface             = local.network_interface
   os_disk                       = var.os_disk
   os_profile                    = var.os_profile
   plan                          = var.plan
@@ -47,7 +47,7 @@ module "vmss" {
 }
 
 ## Security Groups and Rules for Nomad Cluster
-module "avm-res-network-networksecuritygroup" {
+module "avm_res_network_networksecuritygroup" {
   source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version = "0.5.0"
   # insert the 3 required variables here
@@ -57,59 +57,4 @@ module "avm-res-network-networksecuritygroup" {
   resource_group_name = var.resource_group_name
   security_rules      = local.nsg_rules
 }
-locals {
-  additional_rules = {
-    for name, rule in try(var.nsg_rules,{}) : name => merge(
-      rule, {
-        name = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-${name}"
-      }
-    )
-  }
-  #Default NSG Rules for Nomad Cluster
-  nsg_rules = {
-    "ssh_ingress" = {
-      name                       = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-ssh-ingress"
-      access                     = "Allow"
-      destination_address_prefix = "VirtualNetwork"
-      destination_port_range     = "22"
-      direction                  = "Inbound"
-      priority                   = 4092
-      protocol                   = "Tcp"
-      source_address_prefix      = "VirtualNetwork"
-      source_port_range          = "*"
-    }
-    "nomad_ui_ingress" = {
-      name                       = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-nomad-ui-ingress"
-      access                     = "Allow"
-      destination_address_prefix = "VirtualNetwork"
-      destination_port_range     = "4646"
-      direction                  = "Inbound"
-      priority                   = 4095
-      protocol                   = "Tcp"
-      source_address_prefix      = "VirtualNetwork"
-      source_port_range          = "*"
-    }
-    "consul_ui_ingress" = {
-      name                       = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-consul-ui-ingress"
-      access                     = "Allow"
-      destination_address_prefix = "VirtualNetwork"
-      destination_port_range     = "8500"
-      direction                  = "Inbound"
-      priority                   = 4094
-      protocol                   = "Tcp"
-      source_address_prefix      = "VirtualNetwork"
-      source_port_range          = "*"
-    }
-    "allow_all_internal" = {
-      name                       = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}1-allow-all-internal"
-      access                     = "Allow"
-      destination_address_prefix = "VirtualNetwork"
-      destination_port_range     = "*"
-      direction                  = "Inbound"
-      priority                   = 4093
-      protocol                   = "Tcp"
-      source_address_prefix      = "VirtualNetwork"
-      source_port_range          = "*"
-    }
-  }
-}
+
