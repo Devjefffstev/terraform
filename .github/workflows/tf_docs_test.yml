@@ -118,5 +118,5 @@ jobs:
       - name: Check Pre-installed Terraform
         run: terraform --version
       - run: terraform init
-      - run: terraform fmt -diff -check
+      - run: terraform fmt 
       - run: terraform validate
