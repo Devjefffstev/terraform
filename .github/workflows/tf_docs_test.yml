@@ -1,4 +1,4 @@
-name: Terraform fmt TF-Docs
+name: Terraform docs and test
 
 on:
   workflow_dispatch:
