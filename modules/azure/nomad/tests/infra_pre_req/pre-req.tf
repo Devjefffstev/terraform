@@ -34,9 +34,11 @@ resource "azurerm_subnet" "pre_infra_subnet" {
 output "resource_group_name" {
   value = azurerm_resource_group.pre_infra_rg.name
 }
+
 output "resource_group_location" {
   value = azurerm_resource_group.pre_infra_rg.location
 }
+
 output "virtual_network_name" {
   value = azurerm_virtual_network.pre_infra_vnet.name
 }
