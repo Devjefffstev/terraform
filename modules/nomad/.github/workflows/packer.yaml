@@ -1,0 +1,51 @@
+name: Packer - Build Azure Image
+
+on:
+  push:
+
+jobs:
+  packer-build:
+    runs-on: ubuntu-latest
+    environment: sandbox   # binds to GitHub environment "sandbox"
+
+    permissions:
+      id-token: write   # Needed for OIDC login to Azure
+      contents: read
+
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+    defaults:
+      run:
+        working-directory: packer
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Packer manually
+        run: |
+          PACKER_VERSION="1.14.1"
+          curl -L -o packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+          unzip packer.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+
+      - name: Packer initialize
+        run: packer init .
+
+      - name: Validate Packer template
+        run: packer validate image.pkr.hcl
+
+      - name: Build Azure Image with Packer
+        run: |
+          packer build image.pkr.hcl

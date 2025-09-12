@@ -1,0 +1,32 @@
+name: Terraform - Nomad Infrastructure
+
+on:
+  push:
+
+permissions:  # TODO; check required permissions
+  actions: write
+  id-token: write
+  contents: read
+  pull-requests: write
+  
+jobs:
+  plan:
+    name: Plan
+    uses: ./.github/workflows/terraform-plan-vmss.yml
+    secrets: inherit
+    with:
+      environment: sandbox
+      region: eastus
+      tf_working_directory: ./src/nomad
+      tf_vars_file: 'environments/sandbox/sandbox-eastus.tfvars.json'
+
+  apply:
+    name: Apply
+    needs: [plan]
+    uses: ./.github/workflows/terraform-apply-vmss.yml
+    secrets: inherit
+    with:
+      environment: sandbox
+      region: eastus
+      tf_working_directory: ./src/nomad
+      tf_vars_file: 'environments/sandbox/sandbox-eastus.tfvars.json'

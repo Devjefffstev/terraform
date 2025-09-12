@@ -1,0 +1,146 @@
+name: Terraform Apply
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target environment [dev, int, prd]'
+        required: true
+        type: string
+      region:
+        description: 'Azure region [westus, eastus, etc...]'
+        required: true
+        type: string
+      tf_version:
+        description: 'Terraform version to use'
+        required: false
+        type: string
+        default: '1.12.x'
+      tf_working_directory:
+        description: 'Terraform working directory'
+        required: false
+        type: string
+        default: './terraform'
+      tf_vars_file:
+        description: 'Terraform variables file relative to the working directory'
+        required: false
+        type: string
+        default: ''
+
+env:
+  # Env variables for inputs
+  REGION: ${{ inputs.region }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  TF_WORKING_DIRECTORY: ${{ inputs.tf_working_directory }}
+  TF_VERSION: ${{ inputs.tf_version }}
+
+  # Env variables used by terraform cli
+  TF_INPUT: false
+  TF_IN_AUTOMATION: true
+  TF_LOG: INFO
+
+  # Env variables for AzureRM provider and backend
+  ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  ARM_USE_OIDC: true
+
+  # Terraform plan and variable files
+  TF_PLAN_FILE: ${{ inputs.environment }}-${{ inputs.region }}.tfplan
+  TF_VARS_FILE: ${{ inputs.tf_vars_file || format('tfvars/{0}/{0}-{1}.tfvars.json', inputs.environment, inputs.region) }}
+  TF_STATE_KEY: ${{ github.repository_id }}/${{ inputs.environment }}-${{ inputs.region }}-vmss.tfstate
+
+  # Terraform variables for azurerm provider confguration
+  TF_VAR_client_id: ${{ vars.AZURE_CLIENT_ID }}
+  TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+
+  # GitHub App authentication variables for github provider
+  GITHUB_APP_ID: ${{ secrets.APP_ID }}
+  GITHUB_APP_INSTALLATION_ID: ${{ secrets.APP_INSTALLATION_ID }}
+  GITHUB_APP_PEM_FILE: ${{ secrets.APP_PEM_FILE }}
+
+jobs:
+  terraform-apply:
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIRECTORY }}
+    name: Terraform Apply
+    runs-on:
+      group: cf-vnet-access
+      labels: cf-vnet-2cpu-8gb-ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      BACKEND_AZURE_CLIENT_ID: ${{ vars.BACKEND_AZURE_CLIENT_ID }}
+      BACKEND_AZURE_RESOURCE_GROUP_NAME: ${{ vars.BACKEND_AZURE_RESOURCE_GROUP_NAME }}
+      BACKEND_AZURE_STORAGE_ACCOUNT_NAME: ${{ vars.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}
+      BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME: ${{ vars.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Compute hash of backend variables
+        id: backend-hash
+        run: |
+          set -xv
+          BACKEND_HASH=$( (env | grep ^BACKEND_AZURE_ | sort; echo "REGION=${REGION}") | sha256sum | awk '{print $1}')
+          echo "BACKEND_HASH=${BACKEND_HASH}" >> $GITHUB_ENV
+
+      # if the backend variables or the .terraform.lock.hcl file changes then the cache key will change
+      - name: Restore file from cache
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.TF_WORKING_DIRECTORY }}/.terraform
+          key: tf-${{ runner.os }}-${{ env.BACKEND_HASH }}-${{ hashFiles(format('{0}/.terraform.lock.hcl', env.TF_WORKING_DIRECTORY)) }}
+          fail-on-cache-miss: true
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="client_id=${{ env.BACKEND_AZURE_CLIENT_ID }}" \
+            -backend-config="resource_group_name=${{env.BACKEND_AZURE_RESOURCE_GROUP_NAME}}" \
+            -backend-config="storage_account_name=${{env.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}" \
+            -backend-config="container_name=${{env.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}" \
+            -backend-config="key=${{ env.TF_STATE_KEY }}"
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.TF_PLAN_FILE }}
+          path: ${{ env.TF_WORKING_DIRECTORY }}
+
+      - name: Terraform Apply
+        run: |
+          terraform apply \
+          -no-color \
+          -auto-approve \
+          -var-file="${{ env.TF_VARS_FILE }}" \
+          ${{ env.TF_PLAN_FILE }}
+
+      # plan file can contain sensitive information
+      - name: Delete Terraform Plan
+        env:
+          # GitHub CLI automatically uses GH_TOKEN environment variable for authentication
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -x
+          # Get the current run ID
+          RUN_ID=${{ github.run_id }}
+
+          # List artifacts from this specific run and find our artifact
+          ARTIFACTS=$(gh api "repos/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts")
+          ARTIFACT_ID=$(echo "${ARTIFACTS}" | jq '.artifacts[] | select(.name=="${{ env.TF_PLAN_FILE }}") | .id')
+
+          # Delete the artifact if found
+          if [ ! -z "${ARTIFACT_ID}" ]; then
+            gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/${ARTIFACT_ID}"
+            echo "Artifact deleted successfully"
+          else
+            echo "Artifact not found in this workflow run"
+          fi

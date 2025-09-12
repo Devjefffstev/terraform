@@ -1,0 +1,7 @@
+nomad job run nginx.nomad
+nomad job run redis.nomad
+nomad job run prometheus.nomad
+
+nomad job status
+
+nomad job status nginx
