@@ -16,9 +16,15 @@ source "azure-arm" "hashistack" {
   image_sku          = var.image_sku
   vm_size             = var.vm_size
 
-  #uild_resource_group_name           = "rg-my-image-build"
-  managed_image_name                  = var.managed_image_name
-  managed_image_resource_group_name  = var.managed_image_resource_group_name
+ shared_image_gallery_destination {
+    subscription         = var.subscription_id
+    resource_group       = var.azurerm_shared_image_version_object.resource_group_name
+    gallery_name         = var.azurerm_shared_image_version_object.gallery_name
+    image_name           = var.azurerm_shared_image_version_object.image_name
+    image_version        = var.azurerm_shared_image_version_object.name
+    replication_regions  = ["East US"]
+    storage_account_type = "Standard_LRS"
+  }
 }
 
 build {
@@ -51,7 +57,7 @@ variable "image_publisher" {}
 variable "image_offer" {}
 variable "image_sku" {}
 variable "vm_size" {}
-variable "managed_image_name" {}
-variable "managed_image_resource_group_name" {}
+variable "azurerm_shared_image_version_object" {}
+variable "subscription_id" {}
 
 

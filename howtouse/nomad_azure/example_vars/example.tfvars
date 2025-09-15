@@ -1,7 +1,18 @@
 resource_group_name = "rg-nomad"
 location            = "East US"
 vmss_name           = "vmss-nomad"
-
+shared_image_definitions = {
+    img01 = {
+    name               = "nomad"
+      hyper_v_generation = "V2"
+      os_type            = "Linux"
+      identifier = {
+        publisher = "Canonical"
+        offer     = "0001-com-ubuntu-server-jammy"
+        sku       = "22_04-lts-gen2"
+      }
+    }
+}
 enable_telemetry = false
 extension = [{
   name                        = "HealthExtension"

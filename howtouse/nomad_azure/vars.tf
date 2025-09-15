@@ -381,11 +381,16 @@ variable "zones" {
 
 }
 
+variable "shared_image_definitions" {
+  type = any
+}
+
 variable "azurerm_shared_image_version_object" {
-  type        = object({
-    name = string
-    gallery_name = optional(string)
-   resource_group_name = optional(string)
+  type = object({
+    name                = string
+    gallery_name        = optional(string)
+    resource_group_name = optional(string)
+    image_name          = string
 
   })
   description = "Properties for VMSS Image Gallery"

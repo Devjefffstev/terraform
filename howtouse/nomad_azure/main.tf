@@ -22,7 +22,7 @@ module "nomad_cluster" {
   lock                          = var.lock
   managed_identities            = var.managed_identities
   max_bid_price                 = var.max_bid_price
-  network_interface             = var.network_interface
+  network_interface             = local.network_interface
   os_disk                       = var.os_disk
   os_profile                    = local.os_profile
   plan                          = var.plan
@@ -33,7 +33,7 @@ module "nomad_cluster" {
   role_assignments              = var.role_assignments
   single_placement_group        = var.single_placement_group
   sku_name                      = var.sku_name
-  source_image_id               = var.source_image_id
+  source_image_id               = local.source_image_id
   source_image_reference        = var.source_image_reference
   tags                          = var.tags
   termination_notification      = var.termination_notification
@@ -43,14 +43,17 @@ module "nomad_cluster" {
   zones                         = var.zones
 
 
-  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_versions.this]
+  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_version.this]
 }
 
 module "az_compute_galley" {
-  source              = "../../modules/azure/img_gallery"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  name                = replace("${var.vmss_name}-comp-gallery", "-","_")
+  source                   = "../../modules/azure/img_gallery"
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
+  name                     = replace("${var.vmss_name}-comp-gallery", "-", "_")
+  shared_image_definitions = var.shared_image_definitions
+
+  depends_on = [azurerm_resource_group.nomad]
 }
 
 resource "terraform_data" "packer_image" {
@@ -59,11 +62,17 @@ resource "terraform_data" "packer_image" {
       set -e
       IMAGE_NAME="${var.azurerm_shared_image_version_object.name}"
       RESOURCE_GROUP="${var.azurerm_shared_image_version_object.resource_group_name}"
+      GALLERY_NAME="${var.azurerm_shared_image_version_object.gallery_name}"
+      IMAGE_DEFINITION="${var.azurerm_shared_image_version_object.image_name}"
 
-      echo "Starting to check if the image $IMAGE_NAME exists in resource group $RESOURCE_GROUP..."
+      echo "Starting to check if the image $IMAGE_NAME exists in resource group $RESOURCE_GROUP, gallery $GALLERY_NAME, and image definition $IMAGE_DEFINITION..."
 
       while true; do
-        if az image show --name "$IMAGE_NAME" --resource-group "$RESOURCE_GROUP" &>/dev/null; then
+        if az sig image-version show \
+          --resource-group "$RESOURCE_GROUP" \
+          --gallery-name "$GALLERY_NAME" \
+          --gallery-image-definition "$IMAGE_DEFINITION" \
+          --gallery-image-version "$IMAGE_NAME" &>/dev/null; then
           echo "Image $IMAGE_NAME exists!"
           exit 0
         fi
@@ -72,24 +81,26 @@ resource "terraform_data" "packer_image" {
       done
     EOT
   }
+
   triggers_replace = {
     always_run = var.create_packer_image
   }
+
   depends_on = [module.az_compute_galley]
 }
 
 ## Retrieve the image created by Packer 
 ## Take a look at /nomad/packer/variables.pkr.hcl for reference
 
-data "azurerm_shared_image_versions" "this" {
-  
-  image_name          = var.azurerm_shared_image_version_object.name
+data "azurerm_shared_image_version" "this" {
+  name                = var.azurerm_shared_image_version_object.name
+  image_name          = var.azurerm_shared_image_version_object.image_name
   gallery_name        = var.azurerm_shared_image_version_object.gallery_name
   resource_group_name = var.azurerm_shared_image_version_object.resource_group_name
-  depends_on = [terraform_data.packer_image]
+  depends_on          = [terraform_data.packer_image]
 }
 
 output "name" {
 
-  value = data.azurerm_shared_image_versions.this
+  value = data.azurerm_shared_image_version.this
 }
