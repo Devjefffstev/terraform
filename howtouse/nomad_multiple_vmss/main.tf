@@ -38,20 +38,21 @@ module "example_multiple_vmss_one_gallery" {
   plan                          = each.value.plan
   # platform_fault_domain_count   = each.value.platform_fault_domain_count
   # priority                      = each.value.priority
-  priority_mix                  = each.value.priority_mix
-  proximity_placement_group_id  = each.value.proximity_placement_group_id
-  role_assignments              = each.value.role_assignments
-  single_placement_group        = each.value.single_placement_group
-  sku_name                      = each.value.sku_name
-  source_image_id               = each.value.source_image_id
-  source_image_reference        = each.value.source_image_reference
-  tags                          = each.value.tags
-  termination_notification      = each.value.termination_notification
-  timeouts                      = each.value.timeouts
+  priority_mix                 = each.value.priority_mix
+  proximity_placement_group_id = each.value.proximity_placement_group_id
+  role_assignments             = each.value.role_assignments
+  single_placement_group       = each.value.single_placement_group
+  sku_name                     = each.value.sku_name
+  source_image_id              = each.value.source_image_id
+  source_image_reference       = each.value.source_image_reference
+  tags                         = each.value.tags
+  termination_notification     = each.value.termination_notification
+  timeouts                     = each.value.timeouts
   # upgrade_policy                = each.value.upgrade_policy
-  zone_balance                  = each.value.zone_balance
-  zones                         = each.value.zones
-  image_galleries               = each.value.image_galleries
+  zone_balance    = each.value.zone_balance
+  zones           = each.value.zones
+  image_galleries = each.value.image_galleries
+  
 
 
   depends_on = [
@@ -59,6 +60,7 @@ module "example_multiple_vmss_one_gallery" {
     azurerm_network_security_group.nic,
     azurerm_subnet.subnet,
     azurerm_resource_group.nomad,
+    azurerm_resource_group.multiple,
     terraform_data.packer_image,
     azurerm_virtual_network.this,
     azurerm_subnet_network_security_group_association.this,
@@ -86,7 +88,14 @@ locals {
           admin_ssh_key    = toset([tls_private_key.example_ssh.id])
         })
       })
-      source_image_id = keys(var.vmss_config_map)[1] == k ? data.azurerm_image.latest_nomad_image.id : null
+      source_image_id = keys(var.vmss_config_map)[index(keys(var.vmss_config_map),"only_vmss")] == k ? data.azurerm_image.latest_nomad_image.id : (
+        try(
+          
+          # data.azurerm_shared_image_version.this[k].id,
+          null
+        )
+      )
+      
 
 
       image_galleries = {
@@ -97,7 +106,7 @@ locals {
 
                 {
                   image_version = [
-                    for image_version in image_def.image_version :
+                    for image_version in try(image_def.image_version, {}) :
                     merge(image_version, {
                       #   managed_image_id = data.azurerm_image.latest_nomad_image.id ## golden image
                       managed_image_id = data.azurerm_image.latest_nomad_image.id
@@ -109,19 +118,35 @@ locals {
             ]
 
 
-        })
+        }) 
       }
-    })
+    }) if try(v.image_already_created, null) == null
   }
+
+
+data_image_version = {
+  for image in flatten([
+    for k, v in var.vmss_config_map : [      
+          {
+            gallery_name        = v.image_already_created.gallery_name
+            image_def_name      = v.image_already_created.image_definition
+            resource_group_name = v.image_already_created.resource_group_name
+            image_name=v.image_already_created.image_name
+            k=k
+            
+          } 
+        ]          if try(v.image_already_created,null) != null 
+      ]) : image.k => image 
+  } 
+
+  ourside = ""
 }
 
-output "module" {
-  value = module.example_multiple_vmss_one_gallery
-  sensitive = true
-}
+# data "azurerm_shared_image_version" "this" {
+#   for_each = local.data_image_version
+#   gallery_name = each.value.gallery_name
+#   name = each.value.image_name
+#   resource_group_name = each.value.resource_group_name
+#   image_name = each.value.image_name
 
-
-output "terraform_data" {
-  value = terraform_data.packer_image
-
-}
+# }

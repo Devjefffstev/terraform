@@ -185,9 +185,39 @@ variable "vmss_config_map" {
         maximum_surge_instances_enabled         = optional(bool)
       }), {})
     }), null)
-    zone_balance        = optional(bool, null)
-    zones               = optional(set(string), null)
-    image_galleries     = optional(any, {})
+    zone_balance = optional(bool, null)
+    zones        = optional(set(string), null)
+    image_already_created = optional(object({
+      image_definition = optional(string)
+      image_name       = optional(string)
+      gallery_name     = optional(string)
+      resource_group_name  = optional(string)
+    }), null)
+    image_galleries = optional(map(object({
+      shared_image_definitions = list(object({
+        name               = string
+        hyper_v_generation = optional(string)
+        os_type            = optional(string)
+        identifier = optional(object({
+          publisher = string
+          offer     = string
+          sku       = string
+        }))
+        purchase_plan = optional(object({
+          name      = string
+          publisher = optional(string)
+        product = optional(string) }))
+        image_version = list(object({
+          image_name                  = string
+          create_vmss_with_this_image = optional(bool)
+          target_region = object({
+            name                   = string
+            regional_replica_count = number
+            storage_account_type   = string
+          })
+        }))
+      }))
+    })), {})
     create_packer_image = optional(bool, null)
   }))
   default = {}
