@@ -431,11 +431,12 @@ variable "image_galleries" {
           storage_account_type   = string
         })
       }))
-      identifier = object({
+      identifier = optional(object({
         publisher = string
         offer     = string
-      sku = string })
-      os_type = string
+        sku       = string
+      }))
+      os_type = optional(string)
       purchase_plan = optional(object({
         name      = string
         publisher = optional(string)
