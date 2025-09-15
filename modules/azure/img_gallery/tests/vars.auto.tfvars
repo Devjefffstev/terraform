@@ -7,7 +7,7 @@ location = "East US"
 name = "myimagegallery"
 
 # Resource group name
-resource_group_name = "my-resource-group"
+# resource_group_name = "my-resource-group"
 
 # Optional Variables
 
