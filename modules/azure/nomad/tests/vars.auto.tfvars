@@ -1,5 +1,6 @@
 # Core required variables
-
+resource_group_name = "my-rg-pricipal"
+location = "eastus"
 environment         = "test"
 app_function_chatam = "nomad"
 

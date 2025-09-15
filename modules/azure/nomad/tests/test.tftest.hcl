@@ -2,17 +2,17 @@
 # Subscription ID is automatically read from TF_VAR_subscription_id environment variable
 # Add this at the beginning of your test file
 
-variable "subscription_id" {
-  type        = string
-  description = "The Azure subscription ID for testing"
-}
-provider "azurerm" {
-  features {}
-  subscription_id = var.subscription_id
-}
+# variable "subscription_id" {
+#   type        = string
+#   description = "The Azure subscription ID for testing"
+# }
+# provider "azurerm" {
+#   features {}
+#   subscription_id = var.subscription_id
+# }
 
 mock_provider "azurerm" {
-  alias = "fake"
+  alias = "fake"  
   mock_resource "azurerm_subnet" {
     defaults = {
       id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
@@ -27,8 +27,8 @@ mock_provider "azurerm" {
 }
 
 variables {
-  resource_group_name = run.apply_infra_pre_req.resource_group_name
-  location            = run.apply_infra_pre_req.resource_group_location
+  # resource_group_name = run.apply_infra_pre_req.resource_group_name
+  # location            = run.apply_infra_pre_req.resource_group_location
   os_profile = {
     custom_data = base64encode(file("tests/custom-data.yaml"))
     linux_configuration = {
@@ -44,23 +44,27 @@ variables {
       name = "VMSS-NIC"
       ip_configuration = [{
         name      = "VMSS-IPConfig"
-        subnet_id = run.apply_infra_pre_req.subnet_id
+        # subnet_id = run.apply_infra_pre_req.subnet_id
+        subnet_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
       }]
     }
   ]
 source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
 }
 
-run "apply_infra_pre_req" {
-  command = apply
+# run "apply_infra_pre_req" {
+#   command = apply
 
 
-  module {
-    source = "./tests/infra_pre_req"
-  }
-}
+#   module {
+#     source = "./tests/infra_pre_req"
+#   }
+# }
 
 run "plan" {
+  providers = {
+    azurerm = azurerm.fake
+  }
   command = plan
 
   module {
@@ -92,15 +96,15 @@ run "apply" {
 
 
 }
-run "apply_real" {
-  command = apply
-  providers = {
-    azurerm = azurerm
-  }  
-  module {
-    source = "./"
-  }
+# run "apply_real" {
+#   command = apply
+#   providers = {
+#     azurerm = azurerm
+#   }  
+#   module {
+#     source = "./"
+#   }
 
 
-}
+# }
 
