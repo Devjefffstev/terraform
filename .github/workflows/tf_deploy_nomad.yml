@@ -77,10 +77,11 @@ jobs:
       - name: Check Pre-installed Terraform
         run: terraform --version
       - run: terraform init
+        working-directory: howtouse/nomad_azure
       - run: terraform fmt 
+        working-directory: howtouse/nomad_azure
       - run: terraform validate
       - run: terraform test
-        working-directory: howtouse/nomad_azure
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: terraform plan -var "subscription_id=${{ vars.ARM_SUBSCRIPTION_ID }}" -var-file=example_vars/example.tfvars
