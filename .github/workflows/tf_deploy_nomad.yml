@@ -1,4 +1,4 @@
-name: Terraform_docs_and_test
+name: Deploy_nomad
 
 on:
   workflow_dispatch:
