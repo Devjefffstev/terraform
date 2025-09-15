@@ -13,9 +13,8 @@ variable "name" {
 # Define resource group name
 variable "resource_group_name" {
   type        = string
-  description = "(Optional) The resource group where the resources will be deployed."
+  description = "(Required) The resource group where the resources will be deployed."
 }
-
 
 variable "enable_telemetry" {
   type    = bool
