@@ -11,7 +11,7 @@ on:
   
   push:        
     paths:
-      - howtouse/nomad_azure
+      - howtouse/nomad_azure/**
 
    
 env:
