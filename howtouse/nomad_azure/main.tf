@@ -57,8 +57,8 @@ resource "terraform_data" "packer_image" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      IMAGE_NAME="${var.image_name}"
-      RESOURCE_GROUP="${var.resource_group}"
+      IMAGE_NAME="${var.azurerm_shared_image_versions.image_name}"
+      RESOURCE_GROUP="${var.azurerm_shared_image_versions.resource_group_name}"
 
       echo "Starting to check if the image $IMAGE_NAME exists in resource group $RESOURCE_GROUP..."
 
@@ -81,14 +81,15 @@ resource "terraform_data" "packer_image" {
 ## Retrieve the image created by Packer 
 ## Take a look at /nomad/packer/variables.pkr.hcl for reference
 
-data "azurerm_image" "latest_nomad_image" {
-  name                = "ubuntu-custom-image"
-  resource_group_name = "rg-my-image-build"
-
+data "azurerm_shared_image_versions" "this" {
+  
+  image_name          = var.azurerm_shared_image_versions.image_name
+  gallery_name        = var.azurerm_shared_image_versions.gallery_name
+  resource_group_name = var.azurerm_shared_image_versions.resource_group_name
   depends_on = [terraform_data.packer_image]
 }
 
 output "name" {
 
-  value = data.azurerm_image.latest_nomad_image
+  value = data.azurerm_shared_image_versions.latest_nomad_image
 }
