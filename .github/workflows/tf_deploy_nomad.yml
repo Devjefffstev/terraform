@@ -49,10 +49,7 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest    
-    environment: Reviewers
-    strategy:      
-      matrix: 
-        module: ${{ fromJson(needs.find-changes.outputs.changed-modules) }}
+    environment: Reviewers    
     defaults:
       run:
         working-directory: ${{ matrix.module }}
