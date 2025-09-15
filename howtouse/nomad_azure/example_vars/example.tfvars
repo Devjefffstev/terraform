@@ -1,6 +1,6 @@
-resource_group_name = "rg-nomad-one-and-one"
+resource_group_name = "rg-nomad"
 location            = "East US"
-vmss_name           = "vmss-nomad-one-and-one"
+vmss_name           = "vmss-nomad"
 
 enable_telemetry = false
 extension = [{

@@ -43,7 +43,7 @@ module "nomad_cluster" {
   zones                         = var.zones
 
 
-  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_image.latest_nomad_image]
+  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_versions.this]
 }
 
 module "az_compute_galley" {
@@ -57,8 +57,8 @@ resource "terraform_data" "packer_image" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      IMAGE_NAME="${var.azurerm_shared_image_versions.image_name}"
-      RESOURCE_GROUP="${var.azurerm_shared_image_versions.resource_group_name}"
+      IMAGE_NAME="${var.azurerm_shared_image_version_object.name}"
+      RESOURCE_GROUP="${var.azurerm_shared_image_version_object.resource_group_name}"
 
       echo "Starting to check if the image $IMAGE_NAME exists in resource group $RESOURCE_GROUP..."
 
@@ -83,13 +83,13 @@ resource "terraform_data" "packer_image" {
 
 data "azurerm_shared_image_versions" "this" {
   
-  image_name          = var.azurerm_shared_image_versions.image_name
-  gallery_name        = var.azurerm_shared_image_versions.gallery_name
-  resource_group_name = var.azurerm_shared_image_versions.resource_group_name
+  image_name          = var.azurerm_shared_image_version_object.name
+  gallery_name        = var.azurerm_shared_image_version_object.gallery_name
+  resource_group_name = var.azurerm_shared_image_version_object.resource_group_name
   depends_on = [terraform_data.packer_image]
 }
 
 output "name" {
 
-  value = data.azurerm_shared_image_versions.latest_nomad_image
+  value = data.azurerm_shared_image_versions.this
 }

@@ -6,3 +6,9 @@ image_sku                       = "22_04-lts-gen2"
 vm_size                         = "Standard_B2s"
 managed_image_name              = "ubuntu-custom-image"
 managed_image_resource_group_name = "rg-my-image-build"
+
+azurerm_shared_image_version_object = {
+     name = "0.0.1"
+    gallery_name = "vmss_nomad_one_and_one_comp_gallery"
+   resource_group_name = "rg-nomad"
+}
