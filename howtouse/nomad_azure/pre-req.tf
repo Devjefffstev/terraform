@@ -60,7 +60,7 @@ resource "azurerm_network_security_group" "nic" {
   security_rule {
     access                     = "Allow"
     destination_address_prefix = "*"
-    destination_port_range     = "80"
+    destination_port_range     = "22"
     direction                  = "Inbound"
     name                       = "allow-http"
     priority                   = 100
@@ -79,7 +79,7 @@ resource "azurerm_network_security_group" "subnet" {
   security_rule {
     access                     = "Allow"
     destination_address_prefix = "*"
-    destination_port_range     = "80"
+    destination_port_range     = "22"
     direction                  = "Inbound"
     name                       = "allow-http"
     priority                   = 100
@@ -125,4 +125,34 @@ resource "azurerm_subnet_nat_gateway_association" "this" {
 resource "tls_private_key" "example_ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
+}
+
+
+
+resource "azurerm_subnet" "example" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_public_ip" "example" {
+  name                = "examplepip"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_bastion_host" "example" {
+  name                = "examplebastion"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+# sku = "Developer"
+# virtual_network_id = azurerm_virtual_network.this.id
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.example.id
+    public_ip_address_id = azurerm_public_ip.example.id
+  }
 }

@@ -43,7 +43,7 @@ module "nomad_cluster" {
   zones                         = var.zones
 
 
-  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_version.this]
+  depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_version.this, azurerm_bastion_host.example]
 }
 
 module "az_compute_galley" {
@@ -76,8 +76,8 @@ resource "terraform_data" "packer_image" {
           echo "Image $IMAGE_NAME exists!"
           exit 0
         fi
-        echo "Image $IMAGE_NAME does not exist yet. Checking again in 30 seconds..."
-        sleep 30
+        echo "Image $IMAGE_NAME does not exist yet. Checking again in 15 minutes..."
+        sleep 900
       done
     EOT
   }
@@ -86,7 +86,7 @@ resource "terraform_data" "packer_image" {
     always_run = var.create_packer_image
   }
 
-  depends_on = [module.az_compute_galley]
+  depends_on = [module.az_compute_galley, azurerm_bastion_host.example]
 }
 
 ## Retrieve the image created by Packer 
