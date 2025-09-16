@@ -1,13 +1,13 @@
 locals {
-    network_interface = [
-        for ni in var.network_interface : merge(
-            ni, 
-            {
-                network_security_group_id = ni.network_security_group_id == null ? module.avm_res_network_networksecuritygroup.resource_id : ni.network_security_group_id
-            }
-        )
-        ]
-    
+  network_interface = [
+    for ni in var.network_interface : merge(
+      ni,
+      {
+        network_security_group_id = ni.network_security_group_id == null ? module.avm_res_network_networksecuritygroup.resource_id : ni.network_security_group_id
+      }
+    )
+  ]
+
   additional_rules = {
     for name, rule in try(var.nsg_rules, {}) : name => merge(
       rule, {
@@ -62,7 +62,7 @@ locals {
       source_port_range          = "*"
     }
   }
-  merge_rules= merge(
+  merge_rules = merge(
     local.nsg_rules, local.additional_rules
   )
 }

@@ -5,11 +5,11 @@ variable "vm_mod_name" {
 variable "vm_mod_network_interfaces" {
   type = map(
     object({
-      name               = string
-      ip_configurations  = map(
+      name = string
+      ip_configurations = map(
         object({
-          name                               = string
-          app_gateway_backend_pools         = optional(
+          name = string
+          app_gateway_backend_pools = optional(
             map(
               object({
                 app_gateway_backend_pool_resource_id = string
@@ -17,10 +17,10 @@ variable "vm_mod_network_interfaces" {
             ),
             {}
           )
-          create_public_ip_address           = optional(bool, false)
+          create_public_ip_address                                    = optional(bool, false)
           gateway_load_balancer_frontend_ip_configuration_resource_id = optional(string)
-          is_primary_ipconfiguration         = optional(bool, true)
-          load_balancer_backend_pools        = optional(
+          is_primary_ipconfiguration                                  = optional(bool, true)
+          load_balancer_backend_pools = optional(
             map(
               object({
                 load_balancer_backend_pool_resource_id = string
@@ -28,7 +28,7 @@ variable "vm_mod_network_interfaces" {
             ),
             {}
           )
-          load_balancer_nat_rules            = optional(
+          load_balancer_nat_rules = optional(
             map(
               object({
                 load_balancer_nat_rule_resource_id = string
@@ -36,17 +36,17 @@ variable "vm_mod_network_interfaces" {
             ),
             {}
           )
-          private_ip_address                 = optional(string)
-          private_ip_address_allocation      = optional(string, "Dynamic")
-          private_ip_address_version         = optional(string, "IPv4")
-          private_ip_subnet_resource_id      = optional(string)
-          public_ip_address_lock_name        = optional(string)
-          public_ip_address_name             = optional(string)
-          public_ip_address_resource_id      = optional(string)
+          private_ip_address            = optional(string)
+          private_ip_address_allocation = optional(string, "Dynamic")
+          private_ip_address_version    = optional(string, "IPv4")
+          private_ip_subnet_resource_id = optional(string)
+          public_ip_address_lock_name   = optional(string)
+          public_ip_address_name        = optional(string)
+          public_ip_address_resource_id = optional(string)
         })
       )
       accelerated_networking_enabled = optional(bool, false)
-      application_security_groups    = optional(
+      application_security_groups = optional(
         map(
           object({
             application_security_group_resource_id = string
@@ -54,31 +54,31 @@ variable "vm_mod_network_interfaces" {
         ),
         {}
       )
-      diagnostic_settings           = optional(
+      diagnostic_settings = optional(
         map(
           object({
-            name                                 = optional(string, null)
-            log_categories                       = optional(set(string), [])
-            log_groups                           = optional(set(string), [])
-            metric_categories                    = optional(set(string), ["AllMetrics"])
-            log_analytics_destination_type      = optional(string, null)
-            workspace_resource_id               = optional(string, null)
-            storage_account_resource_id         = optional(string, null)
+            name                                     = optional(string, null)
+            log_categories                           = optional(set(string), [])
+            log_groups                               = optional(set(string), [])
+            metric_categories                        = optional(set(string), ["AllMetrics"])
+            log_analytics_destination_type           = optional(string, null)
+            workspace_resource_id                    = optional(string, null)
+            storage_account_resource_id              = optional(string, null)
             event_hub_authorization_rule_resource_id = optional(string, null)
-            event_hub_name                      = optional(string, null)
-            marketplace_partner_resource_id     = optional(string, null)
+            event_hub_name                           = optional(string, null)
+            marketplace_partner_resource_id          = optional(string, null)
           })
         ),
         {}
       )
-      dns_servers                      = optional(list(string))
-      inherit_tags                    = optional(bool, true)
-      internal_dns_name_label          = optional(string)
-      ip_forwarding_enabled            = optional(bool, false)
-      is_primary                       = optional(bool, false)
-      lock_level                       = optional(string)
-      lock_name                        = optional(string)
-      network_security_groups          = optional(
+      dns_servers             = optional(list(string))
+      inherit_tags            = optional(bool, true)
+      internal_dns_name_label = optional(string)
+      ip_forwarding_enabled   = optional(bool, false)
+      is_primary              = optional(bool, false)
+      lock_level              = optional(string)
+      lock_name               = optional(string)
+      network_security_groups = optional(
         map(
           object({
             network_security_group_resource_id = string
@@ -86,29 +86,29 @@ variable "vm_mod_network_interfaces" {
         ),
         {}
       )
-      resource_group_name              = optional(string)
-      role_assignments                 = optional(
+      resource_group_name = optional(string)
+      role_assignments = optional(
         map(
           object({
-            principal_id                          = string
-            role_definition_id_or_name           = string
-            assign_to_child_public_ip_addresses  = optional(bool, true)
-            condition                            = optional(string, null)
-            condition_version                    = optional(string, null)
+            principal_id                           = string
+            role_definition_id_or_name             = string
+            assign_to_child_public_ip_addresses    = optional(bool, true)
+            condition                              = optional(string, null)
+            condition_version                      = optional(string, null)
             delegated_managed_identity_resource_id = optional(string, null)
-            description                          = optional(string, null)
-            skip_service_principal_aad_check    = optional(bool, false)
-            principal_type                       = optional(string, null)
+            description                            = optional(string, null)
+            skip_service_principal_aad_check       = optional(bool, false)
+            principal_type                         = optional(string, null)
           })
         ),
         {}
       )
       tags = optional(map(string), null)
     })
-  ) 
+  )
 }
 variable "vm_mod_zone" {
-  type = string
+  type        = string
   description = "The Availability Zone which the Virtual Machine should be allocated in, only one zone would be accepted. If set then this module won't create `azurerm_availability_set` resource. Changing this forces a new resource to be created. This has been moved to a required value to comply with WAF guidance to intentionally select zones for resources as part of resource architectures. If deploying to a region without zones, set this value to null."
 }
 
@@ -118,9 +118,9 @@ variable "vm_mod_account_credentials" {
   type = object({
     admin_credentials = optional(
       object({
-        username                          = optional(string, "azureuser")
-        password                          = optional(string, null)
-        ssh_keys                          = optional(list(string), [])
+        username                           = optional(string, "azureuser")
+        password                           = optional(string, null)
+        ssh_keys                           = optional(list(string), [])
         generate_admin_password_or_ssh_key = optional(bool, true) # Use of flag is required to avoid known after apply issues
       }),
       {}
@@ -130,11 +130,11 @@ variable "vm_mod_account_credentials" {
         resource_id = string
         secret_configuration = optional(
           object({
-            name                              = optional(string, null)
-            expiration_date_length_in_days   = optional(number, 45)
-            content_type                     = optional(string, "text/plain")
-            not_before_date                  = optional(string, null)
-            tags                             = optional(map(string), {})
+            name                           = optional(string, null)
+            expiration_date_length_in_days = optional(number, 45)
+            content_type                   = optional(string, "text/plain")
+            not_before_date                = optional(string, null)
+            tags                           = optional(map(string), {})
           }),
           {}
         )
@@ -145,15 +145,17 @@ variable "vm_mod_account_credentials" {
 
     # Future additional user credentials map?
   })
+  default = {}
 }
 
 variable "vm_mod_additional_unattend_contents" {
-  type = list(object({ content = string 
+  type = list(object({ content = string
   setting = string }))
+  default = {}
 }
 
 variable "vm_mod_allow_extension_operations" {
-  type = bool
+  type    = bool
   default = true
 }
 variable "vm_mod_availability_set_resource_id" {
@@ -187,6 +189,7 @@ variable "vm_mod_azure_backup_configurations" {
 - `exclude_disk_luns`: (Optional) Disks to exclude, specified as a list of logical unit numbers (LUNs).
 - `include_disk_luns`: (Optional) Disks to include, specified as a list of logical unit numbers (LUNs).
 EOT
+  default     = {}
 }
 
 variable "vm_mod_boot_diagnostics" {
@@ -194,7 +197,7 @@ variable "vm_mod_boot_diagnostics" {
   description = <<EOT
 (Optional) Enable or Disable boot diagnostics.
 EOT
-  default = false
+  default     = false
 }
 
 variable "vm_mod_boot_diagnostics_storage_account_uri" {
@@ -204,7 +207,7 @@ variable "vm_mod_boot_diagnostics_storage_account_uri" {
 to store Boot Diagnostics, including Console Output and Screenshots from the Hypervisor. 
 Passing a null value will utilize a managed storage account for diagnostics.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_bypass_platform_safety_checks_on_user_schedule_enabled" {
@@ -213,7 +216,7 @@ variable "vm_mod_bypass_platform_safety_checks_on_user_schedule_enabled" {
 (Optional) Specifies whether to skip platform scheduled patching when a user schedule 
 is associated with the VM. This value can only be set to `true` when `patch_mode` is set to `AutomaticByPlatform`.
 EOT
-  default = false
+  default     = false
 }
 
 variable "vm_mod_capacity_reservation_group_resource_id" {
@@ -222,7 +225,7 @@ variable "vm_mod_capacity_reservation_group_resource_id" {
 (Optional) Specifies the Azure Resource ID of the Capacity Reservation Group with the virtual machine 
 should be allocated to. Cannot be used with `availability_set_id` or `proximity_placement_group_id`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_computer_name" {
@@ -232,7 +235,7 @@ variable "vm_mod_computer_name" {
 this defaults to the value for the `vm_name` field. If the value of the `vm_name` field is not a valid `computer_name`, 
 then you must specify `computer_name`. Changing this forces a new resource to be created.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_custom_data" {
@@ -240,54 +243,54 @@ variable "vm_mod_custom_data" {
   description = <<EOT
 (Optional) The Base64 encoded Custom Data for building this virtual machine. Changing this forces a new resource to be created.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_data_disk_managed_disks" {
   type = map(
     object({
-      caching                                = string
-      lun                                    = number
-      name                                   = string
-      storage_account_type                  = string
-      create_option                         = optional(string, "Empty")
-      disk_access_resource_id               = optional(string)
-      disk_attachment_create_option         = optional(string)
-      disk_encryption_set_resource_id       = optional(string) # this is currently a preview feature in the provider
-      disk_iops_read_only                   = optional(number, null)
-      disk_iops_read_write                  = optional(number, null)
-      disk_mbps_read_only                   = optional(number, null)
-      disk_mbps_read_write                  = optional(number, null)
-      disk_size_gb                          = optional(number, 128)
-      gallery_image_reference_resource_id   = optional(string)
-      hyper_v_generation                    = optional(string)
-      image_reference_resource_id           = optional(string)
-      inherit_tags                          = optional(bool, true)
-      lock_level                            = optional(string, null)
-      lock_name                             = optional(string, null)
-      logical_sector_size                   = optional(number, null)
-      max_shares                            = optional(number)
-      network_access_policy                 = optional(string)
-      on_demand_bursting_enabled            = optional(bool)
-      optimized_frequent_attach_enabled     = optional(bool, false)
-      os_type                               = optional(string)
-      performance_plus_enabled              = optional(bool, false)
-      public_network_access_enabled         = optional(bool)
-      resource_group_name                   = optional(string)
+      caching                                   = string
+      lun                                       = number
+      name                                      = string
+      storage_account_type                      = string
+      create_option                             = optional(string, "Empty")
+      disk_access_resource_id                   = optional(string)
+      disk_attachment_create_option             = optional(string)
+      disk_encryption_set_resource_id           = optional(string) # this is currently a preview feature in the provider
+      disk_iops_read_only                       = optional(number, null)
+      disk_iops_read_write                      = optional(number, null)
+      disk_mbps_read_only                       = optional(number, null)
+      disk_mbps_read_write                      = optional(number, null)
+      disk_size_gb                              = optional(number, 128)
+      gallery_image_reference_resource_id       = optional(string)
+      hyper_v_generation                        = optional(string)
+      image_reference_resource_id               = optional(string)
+      inherit_tags                              = optional(bool, true)
+      lock_level                                = optional(string, null)
+      lock_name                                 = optional(string, null)
+      logical_sector_size                       = optional(number, null)
+      max_shares                                = optional(number)
+      network_access_policy                     = optional(string)
+      on_demand_bursting_enabled                = optional(bool)
+      optimized_frequent_attach_enabled         = optional(bool, false)
+      os_type                                   = optional(string)
+      performance_plus_enabled                  = optional(bool, false)
+      public_network_access_enabled             = optional(bool)
+      resource_group_name                       = optional(string)
       secure_vm_disk_encryption_set_resource_id = optional(string)
-      security_type                         = optional(string)
-      source_resource_id                    = optional(string)
-      source_uri                            = optional(string)
-      storage_account_resource_id           = optional(string)
-      tags                                  = optional(map(string), null)
-      tier                                  = optional(string)
-      trusted_launch_enabled                = optional(bool)
-      upload_size_bytes                     = optional(number, null)
-      write_accelerator_enabled             = optional(bool)
-      encryption_settings                   = optional(
+      security_type                             = optional(string)
+      source_resource_id                        = optional(string)
+      source_uri                                = optional(string)
+      storage_account_resource_id               = optional(string)
+      tags                                      = optional(map(string), null)
+      tier                                      = optional(string)
+      trusted_launch_enabled                    = optional(bool)
+      upload_size_bytes                         = optional(number, null)
+      write_accelerator_enabled                 = optional(bool)
+      encryption_settings = optional(
         list(
           object({
-            disk_encryption_key_vault_secret_url = optional(string)
+            disk_encryption_key_vault_secret_url  = optional(string)
             disk_encryption_key_vault_resource_id = optional(string)
             key_encryption_key_vault_secret_url   = optional(string)
             key_encryption_key_vault_resource_id  = optional(string)
@@ -298,14 +301,14 @@ variable "vm_mod_data_disk_managed_disks" {
       role_assignments = optional(
         map(
           object({
-            role_definition_id_or_name           = string
-            principal_id                          = string
-            description                           = optional(string, null)
-            skip_service_principal_aad_check      = optional(bool, false)
-            condition                             = optional(string, null)
-            condition_version                     = optional(string, null)
+            role_definition_id_or_name             = string
+            principal_id                           = string
+            description                            = optional(string, null)
+            skip_service_principal_aad_check       = optional(bool, false)
+            condition                              = optional(string, null)
+            condition_version                      = optional(string, null)
             delegated_managed_identity_resource_id = optional(string, null)
-            principal_type                        = optional(string, null)
+            principal_type                         = optional(string, null)
           })
         ),
         {}
@@ -316,7 +319,7 @@ variable "vm_mod_data_disk_managed_disks" {
 (Optional) A map of managed disk configurations. Each configuration includes details for a managed disk 
 attached to the VM. Changing properties may require a new resource to be created. Includes options for encryption, IOPS, tiering, and attachment specifics.
 EOT
-default = {}
+  default     = {}
 }
 
 variable "vm_mod_dedicated_host_group_resource_id" {
@@ -325,7 +328,7 @@ variable "vm_mod_dedicated_host_group_resource_id" {
 (Optional) The Azure Resource ID of the dedicated host group where this virtual machine should run.
 Conflicts with dedicated_host_resource_id (dedicated_host_group_id on the azurerm provider).
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_dedicated_host_resource_id" {
@@ -334,22 +337,22 @@ variable "vm_mod_dedicated_host_resource_id" {
 (Optional) The Azure Resource ID of the dedicated host where this virtual machine should run.
 Conflicts with dedicated_host_group_resource_id (dedicated_host_group_id on the azurerm provider).
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_diagnostic_settings" {
   type = map(
     object({
       name                                     = optional(string, null)
-      log_categories                          = optional(set(string), [])
-      log_groups                              = optional(set(string), [])
-      metric_categories                       = optional(set(string), ["AllMetrics"])
-      log_analytics_destination_type          = optional(string, "Dedicated")
-      workspace_resource_id                   = optional(string, null)
-      storage_account_resource_id             = optional(string, null)
+      log_categories                           = optional(set(string), [])
+      log_groups                               = optional(set(string), [])
+      metric_categories                        = optional(set(string), ["AllMetrics"])
+      log_analytics_destination_type           = optional(string, "Dedicated")
+      workspace_resource_id                    = optional(string, null)
+      storage_account_resource_id              = optional(string, null)
       event_hub_authorization_rule_resource_id = optional(string, null)
-      event_hub_name                          = optional(string, null)
-      marketplace_partner_resource_id         = optional(string, null)
+      event_hub_name                           = optional(string, null)
+      marketplace_partner_resource_id          = optional(string, null)
     })
   )
   description = <<EOT
@@ -365,7 +368,7 @@ diagnostic_settings = {
   }
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_disable_password_authentication" {
@@ -375,7 +378,7 @@ DEPRECATED: This input has been moved to `account_credentials.password_authentic
 and will be removed with the release of version v1.0.0. If true, this value will disallow password 
 authentication on Linux VMs. At least one public key must be configured.
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_disk_controller_type" {
@@ -383,7 +386,7 @@ variable "vm_mod_disk_controller_type" {
   description = <<EOT
 (Optional) Specifies the Disk Controller Type used for this Virtual Machine. Possible values are `SCSI` and `NVME`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_edge_zone" {
@@ -392,7 +395,7 @@ variable "vm_mod_edge_zone" {
 (Optional) Specifies the Edge Zone within the Azure Region where this Virtual Machine should exist.
 Changing this forces a new Virtual Machine to be created.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_enable_automatic_updates" {
@@ -401,7 +404,7 @@ variable "vm_mod_enable_automatic_updates" {
 (Optional) Specifies if Automatic Updates are enabled for the Windows Virtual Machine.
 Changing this forces a new resource to be created.
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_enable_telemetry" {
@@ -411,7 +414,7 @@ This variable controls whether or not telemetry is enabled for the module.
 For more information, see https://aka.ms/avm/telemetry. Setting this to `false`
 ensures no telemetry data is collected.
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_encryption_at_host_enabled" {
@@ -420,27 +423,27 @@ variable "vm_mod_encryption_at_host_enabled" {
 (Optional) Should all of the disks (including the temp disk) attached to this Virtual Machine
 be encrypted by enabling Encryption at Host?
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_extensions" {
   type = map(
     object({
-      name                = string
-      publisher           = string
-      type                = string
-      type_handler_version = string
-      auto_upgrade_minor_version = optional(bool)
-      automatic_upgrade_enabled  = optional(bool)
-      deploy_sequence            = optional(number, 5)
+      name                        = string
+      publisher                   = string
+      type                        = string
+      type_handler_version        = string
+      auto_upgrade_minor_version  = optional(bool)
+      automatic_upgrade_enabled   = optional(bool)
+      deploy_sequence             = optional(number, 5)
       failure_suppression_enabled = optional(bool, false)
-      settings                   = optional(string)
-      protected_settings         = optional(string)
-      provision_after_extensions = optional(list(string), [])
-      tags                       = optional(map(string), null)
+      settings                    = optional(string)
+      protected_settings          = optional(string)
+      provision_after_extensions  = optional(list(string), [])
+      tags                        = optional(map(string), null)
       protected_settings_from_key_vault = optional(
         object({
-          secret_url    = string
+          secret_url      = string
           source_vault_id = string
         })
       )
@@ -458,7 +461,7 @@ variable "vm_mod_extensions" {
 This map of objects is used to create additional `azurerm_virtual_machine_extension` resources, with configurations
 such as script execution, tags, and timeouts. Refer to the Azure resource docs for additional extension details.
 EOT
-  default = {}
+  default     = {}
 }
 variable "vm_mod_extensions_time_budget" {
   type        = string
@@ -466,16 +469,16 @@ variable "vm_mod_extensions_time_budget" {
 (Optional) Specifies the duration allocated for all extensions to start. 
 The time duration should be between 15 minutes and 120 minutes (inclusive) and should be specified in ISO 8601 format.
 EOT
-  default = "PT1H30M"
+  default     = "PT1H30M"
 }
 
 variable "vm_mod_gallery_applications" {
   type = map(
     object({
-      version_id           = string
+      version_id             = string
       configuration_blob_uri = optional(string)
-      order                = optional(number, 0)
-      tag                  = optional(string)
+      order                  = optional(number, 0)
+      tag                    = optional(string)
     })
   )
   description = <<EOT
@@ -494,7 +497,7 @@ gallery_applications = {
   }
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_generate_admin_password_or_ssh_key" {
@@ -505,17 +508,17 @@ This input will be removed with the release of version v1.0.0.
 If `os_type` is Linux, this will generate and store an SSH key as the default.
 Setting `disable_password_authentication` to `false` will generate and store a password instead of an SSH key.
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_generated_secrets_key_vault_secret_config" {
   type = object({
-    key_vault_resource_id       = string
-    name                        = optional(string, null)
+    key_vault_resource_id          = string
+    name                           = optional(string, null)
     expiration_date_length_in_days = optional(number, 45)
-    content_type                = optional(string, "text/plain")
-    not_before_date             = optional(string, null)
-    tags                        = optional(map(string), {})
+    content_type                   = optional(string, "text/plain")
+    not_before_date                = optional(string, null)
+    tags                           = optional(map(string), {})
   })
   description = <<EOT
 DEPRECATED: The logic behind this input has been consolidated to `account_credentials.key_vault_configuration`.
@@ -526,7 +529,7 @@ The object includes:
 - `content_type` (Optional): The secret content type. Defaults to `text/plain`.
 - `not_before_date` (Optional): UTC datetime indicating when the secret becomes valid. Defaults to null.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_hotpatching_enabled" {
@@ -535,7 +538,7 @@ variable "vm_mod_hotpatching_enabled" {
 (Optional) Should the VM be patched without requiring a reboot?
 Hotpatching can only be enabled if the `patch_mode` is set to `AutomaticByPlatform` and the VM meets other prerequisites.
 EOT
-  default = false
+  default     = false
 }
 
 variable "vm_mod_license_type" {
@@ -545,7 +548,7 @@ variable "vm_mod_license_type" {
 - Valid options for Linux: `RHEL_BYOS`, `SLES_BYOS`.
 - Valid options for Windows: `None`, `Windows_Client`, `Windows_Server`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_lock" {
@@ -564,11 +567,11 @@ lock = {
   name = "lock-resourcename"
 }
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_maintenance_configuration_resource_ids" {
-  type = map(string)
+  type        = map(string)
   description = <<EOT
 A map of maintenance configuration IDs to apply to this virtual machine. Key-value pairs allow indexing by arbitrary keys.
 Example Input:
@@ -576,12 +579,12 @@ maintenance_configuration_resource_ids = {
   config_1 = "<maintenance_config_resource_id>"
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_managed_identities" {
   type = object({
-    system_assigned          = optional(bool, false)
+    system_assigned            = optional(bool, false)
     user_assigned_resource_ids = optional(set(string), [])
   })
   description = <<EOT
@@ -589,7 +592,7 @@ Specifies managed identities for the virtual machine:
 - `system_assigned` (Optional): Whether a system-assigned identity should be enabled. Defaults to `false`.
 - `user_assigned_resource_ids` (Optional): List of user-assigned identity resource IDs.
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_max_bid_price" {
@@ -597,19 +600,19 @@ variable "vm_mod_max_bid_price" {
   description = <<EOT
 (Optional) The maximum price you're willing to pay for a Spot VM, in USD. Defaults to `-1` to prevent eviction for price reasons.
 EOT
-  default = -1
+  default     = -1
 }
 
 variable "vm_mod_os_disk" {
   type = object({
-    caching                   = string
-    storage_account_type      = string
-    disk_encryption_set_id    = optional(string)
-    disk_size_gb              = optional(number, null)
-    name                      = optional(string, null)
+    caching                          = string
+    storage_account_type             = string
+    disk_encryption_set_id           = optional(string)
+    disk_size_gb                     = optional(number, null)
+    name                             = optional(string, null)
     secure_vm_disk_encryption_set_id = optional(string)
-    security_encryption_type  = optional(string)
-    write_accelerator_enabled = optional(bool, false)
+    security_encryption_type         = optional(string)
+    write_accelerator_enabled        = optional(bool, false)
     diff_disk_settings = optional(
       object({
         option    = string
@@ -637,7 +640,7 @@ variable "vm_mod_os_type" {
   description = <<EOT
 The base OS type used to build the VM. Valid options: `Windows`, `Linux`.
 EOT
-  default = "Windows"
+  default     = "Windows"
 }
 
 variable "vm_mod_patch_assessment_mode" {
@@ -646,7 +649,7 @@ variable "vm_mod_patch_assessment_mode" {
 (Optional) Specifies the mode of VM Guest Patching for the Virtual Machine. 
 Possible values are `AutomaticByPlatform` or `ImageDefault`.
 EOT
-  default = "ImageDefault"
+  default     = "ImageDefault"
 }
 
 variable "vm_mod_patch_mode" {
@@ -656,7 +659,7 @@ variable "vm_mod_patch_mode" {
 Possible values are `AutomaticByPlatform` and `ImageDefault`. 
 For more information on patch modes, refer to the product documentation.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_plan" {
@@ -678,7 +681,7 @@ plan = {
   publisher = "cisco"
 }
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_platform_fault_domain" {
@@ -687,7 +690,7 @@ variable "vm_mod_platform_fault_domain" {
 (Optional) Specifies the Platform Fault Domain for the VM. Defaults to `null`, enabling automatic assignment 
 to a fault domain that balances across the available domains. `virtual_machine_scale_set_id` is required.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_priority" {
@@ -696,7 +699,7 @@ variable "vm_mod_priority" {
 (Optional) Specifies the priority of the Virtual Machine. 
 Possible values are `Regular` and `Spot`. Defaults to `Regular`.
 EOT
-  default = "Regular"
+  default     = "Regular"
 }
 
 variable "vm_mod_provision_vm_agent" {
@@ -705,7 +708,7 @@ variable "vm_mod_provision_vm_agent" {
 (Optional) Specifies whether to provision the Azure VM Agent on this Virtual Machine. 
 Defaults to `true`. If set to `false`, `allow_extension_operations` must also be set to `false`.
 EOT
-  default = true
+  default     = true
 }
 
 variable "vm_mod_proximity_placement_group_resource_id" {
@@ -714,23 +717,23 @@ variable "vm_mod_proximity_placement_group_resource_id" {
 (Optional) Specifies the ID of the Proximity Placement Group assigned to this Virtual Machine. 
 Conflicts with `capacity_reservation_group_resource_id`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_public_ip_configuration_details" {
   type = object({
-    allocation_method                = optional(string, "Static")
-    ddos_protection_mode             = optional(string, "VirtualNetworkInherited")
-    ddos_protection_plan_id          = optional(string)
-    domain_name_label                = optional(string)
-    idle_timeout_in_minutes          = optional(number, 30)
-    inherit_tags                     = optional(bool, false)
-    ip_version                       = optional(string, "IPv4")
-    lock_level                       = optional(string, null)
-    sku                              = optional(string, "Standard")
-    sku_tier                         = optional(string, "Regional")
-    tags                             = optional(map(string), null)
-    zones                            = optional(set(string), ["1", "2", "3"])
+    allocation_method       = optional(string, "Static")
+    ddos_protection_mode    = optional(string, "VirtualNetworkInherited")
+    ddos_protection_plan_id = optional(string)
+    domain_name_label       = optional(string)
+    idle_timeout_in_minutes = optional(number, 30)
+    inherit_tags            = optional(bool, false)
+    ip_version              = optional(string, "IPv4")
+    lock_level              = optional(string, null)
+    sku                     = optional(string, "Standard")
+    sku_tier                = optional(string, "Regional")
+    tags                    = optional(map(string), null)
+    zones                   = optional(set(string), ["1", "2", "3"])
   })
   description = <<EOT
 This object describes the Public IP configuration for VMs:
@@ -764,20 +767,20 @@ variable "vm_mod_reboot_setting" {
 (Optional) Specifies the reboot setting for platform scheduled patching. 
 Possible values: `Always`, `IfRequired`, `Never`. Requires `patch_mode` set to `AutomaticByPlatform`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_role_assignments" {
   type = map(
     object({
-      role_definition_id_or_name           = string
-      principal_id                          = string
-      condition                             = optional(string, null)
-      condition_version                     = optional(string, null)
+      role_definition_id_or_name             = string
+      principal_id                           = string
+      condition                              = optional(string, null)
+      condition_version                      = optional(string, null)
       delegated_managed_identity_resource_id = optional(string, null)
-      description                           = optional(string, null)
-      principal_type                        = optional(string, null)
-      skip_service_principal_aad_check      = optional(bool, false)
+      description                            = optional(string, null)
+      principal_type                         = optional(string, null)
+      skip_service_principal_aad_check       = optional(bool, false)
     })
   )
   description = <<EOT
@@ -792,20 +795,20 @@ role_assignments = {
   }
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_role_assignments_system_managed_identity" {
   type = map(
     object({
-      role_definition_id_or_name = string
-      scope_resource_id          = string
-      condition                  = optional(string, null)
-      condition_version          = optional(string, null)
-      description                = optional(string, null)
-      skip_service_principal_aad_check = optional(bool, false)
+      role_definition_id_or_name             = string
+      scope_resource_id                      = string
+      condition                              = optional(string, null)
+      condition_version                      = optional(string, null)
+      description                            = optional(string, null)
+      skip_service_principal_aad_check       = optional(bool, false)
       delegated_managed_identity_resource_id = optional(string, null)
-      principal_type             = optional(string, null)
+      principal_type                         = optional(string, null)
     })
   )
   description = <<EOT
@@ -819,39 +822,39 @@ role_assignments_system_managed_identity = {
   }
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_run_commands" {
   type = map(
     object({
-      location                 = string
-      name                     = string
-      deploy_sequence          = optional(number, 3)
-      script_source            = object({
-        command_id             = optional(string)
-        script                 = optional(string)
-        script_uri             = optional(string)
+      location        = string
+      name            = string
+      deploy_sequence = optional(number, 3)
+      script_source = object({
+        command_id = optional(string)
+        script     = optional(string)
+        script_uri = optional(string)
         script_uri_managed_identity = optional(object({
-          client_id            = optional(string)
-          object_id            = optional(string)
+          client_id = optional(string)
+          object_id = optional(string)
         }))
       })
       error_blob_managed_identity = optional(object({
-        client_id              = optional(string)
-        object_id              = optional(string)
+        client_id = optional(string)
+        object_id = optional(string)
       }))
-      error_blob_uri           = optional(string)
+      error_blob_uri = optional(string)
       output_blob_managed_identity = optional(object({
-        client_id              = optional(string)
-        object_id              = optional(string)
+        client_id = optional(string)
+        object_id = optional(string)
       }))
-      output_blob_uri          = optional(string)
-      parameters               = optional(map(object({
-        name                   = string
-        value                  = string
+      output_blob_uri = optional(string)
+      parameters = optional(map(object({
+        name  = string
+        value = string
       })), {})
-      tags                     = optional(map(string))
+      tags = optional(map(string))
     })
   )
   description = <<EOT
@@ -867,7 +870,7 @@ variable "vm_mod_run_commands" {
         }
       }
       EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_run_commands_secrets" {
@@ -877,8 +880,8 @@ variable "vm_mod_run_commands_secrets" {
         name  = string
         value = string
       })), {})
-      run_as_password      = optional(string)
-      run_as_user          = optional(string)
+      run_as_password = optional(string)
+      run_as_user     = optional(string)
     })
   )
   description = <<EOT
@@ -886,7 +889,7 @@ Defines sensitive values for VM Run Commands:
 - `run_as_user`: (Optional) Name of account for running command.
 - `parameters`: (Optional) Key-value pairs of protected params.
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_secrets" {
@@ -921,7 +924,7 @@ secrets = [
   }
 ]
 EOT
-  default = []
+  default     = []
 }
 
 variable "vm_mod_secure_boot_enabled" {
@@ -930,7 +933,7 @@ variable "vm_mod_secure_boot_enabled" {
 (Optional) Specifies whether Secure Boot should be enabled on the virtual machine. 
 Changing this forces a new resource to be created.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_shutdown_schedules" {
@@ -939,10 +942,10 @@ variable "vm_mod_shutdown_schedules" {
       daily_recurrence_time = string
       notification_settings = optional(
         object({
-          enabled        = optional(bool, false)
-          email          = optional(string, null)
+          enabled         = optional(bool, false)
+          email           = optional(string, null)
           time_in_minutes = optional(string, "30")
-          webhook_url    = optional(string, null)
+          webhook_url     = optional(string, null)
         }),
         {
           enabled = false
@@ -972,7 +975,7 @@ shutdown_schedules = {
   }
 }
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_sku_size" {
@@ -980,7 +983,7 @@ variable "vm_mod_sku_size" {
   description = <<EOT
 The SKU value to use for the deployment of this virtual machine, e.g., "Standard_D2s_v3".
 EOT
-  default = "Standard_D2ds_v5"
+  default     = "Standard_D2ds_v5"
 }
 
 variable "vm_mod_source_image_reference" {
@@ -1019,7 +1022,7 @@ variable "vm_mod_source_image_resource_id" {
 The Azure Resource ID of a custom source image to create the VM.
 Either `source_image_resource_id` or `source_image_reference` must be set, but not both.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_tags" {
@@ -1027,7 +1030,7 @@ variable "vm_mod_tags" {
   description = <<EOT
 Map of tags to be assigned to the virtual machine resource.
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_termination_notification" {
@@ -1046,7 +1049,7 @@ termination_notification = {
   timeout = "PT10M"
 }
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_timeouts" {
@@ -1075,7 +1078,7 @@ Specifies custom timeout configurations for VM-related resources:
 - `azurerm_virtual_machine_extension`: Timeout for extensions.
 - `azurerm_virtual_machine_run_command`: Timeout for VM commands.
 EOT
-  default = {}
+  default     = {}
 }
 
 variable "vm_mod_timezone" {
@@ -1084,7 +1087,7 @@ variable "vm_mod_timezone" {
 (Optional) Specifies the timezone to be used by the virtual machine. 
 Example: "Pacific Standard Time". Refer to supported timezones for valid values.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_user_data" {
@@ -1092,7 +1095,7 @@ variable "vm_mod_user_data" {
   description = <<EOT
 (Optional) Base64-encoded custom user data for the virtual machine.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_virtual_machine_scale_set_resource_id" {
@@ -1101,13 +1104,13 @@ variable "vm_mod_virtual_machine_scale_set_resource_id" {
 (Optional) Resource ID of the VM Scale Set within which this VM will be created. 
 Conflicts with `availability_set_id`.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_vm_additional_capabilities" {
   type = object({
-    ultra_ssd_enabled    = optional(bool, false)
-    hibernation_enabled  = optional(bool, null)
+    ultra_ssd_enabled   = optional(bool, false)
+    hibernation_enabled = optional(bool, null)
   })
   description = <<EOT
 Configures additional VM capabilities:
@@ -1119,7 +1122,7 @@ vm_additional_capabilities = {
   ultra_ssd_enabled = true
 }
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_vtpm_enabled" {
@@ -1128,7 +1131,7 @@ variable "vm_mod_vtpm_enabled" {
 (Optional) Specifies whether vTPM should be enabled for the virtual machine.
 Changing this forces a new resource to be created.
 EOT
-  default = null
+  default     = null
 }
 
 variable "vm_mod_winrm_listeners" {
@@ -1158,5 +1161,5 @@ winrm_listeners = [
   }
 ]
 EOT
-  default = []
+  default     = []
 }
