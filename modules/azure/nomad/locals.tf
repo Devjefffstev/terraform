@@ -62,4 +62,7 @@ locals {
       source_port_range          = "*"
     }
   }
+  merge_rules= merge(
+    local.nsg_rules, local.additional_rules
+  )
 }

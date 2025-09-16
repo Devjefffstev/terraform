@@ -53,6 +53,6 @@ module "avm_res_network_networksecuritygroup" {
   location = var.location
   name     = "nsg-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-001"
   resource_group_name = var.resource_group_name
-  security_rules      = local.nsg_rules
+  security_rules      = local.merge_rules
 }
 
