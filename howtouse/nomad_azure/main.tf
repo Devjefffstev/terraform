@@ -1,4 +1,5 @@
-module "nomad_cluster" {
+
+module "nomad_cluster_client" {
   source                        = "../../modules/azure/nomad"
   resource_group_name           = var.resource_group_name
   location                      = var.location
@@ -6,7 +7,7 @@ module "nomad_cluster" {
   user_data_base64              = var.user_data_base64
   additional_capabilities       = var.additional_capabilities
   admin_password                = var.admin_password
-  admin_ssh_keys                = var.admin_ssh_keys
+  admin_ssh_keys                = local.admin_ssh_keys
   automatic_instance_repair     = var.automatic_instance_repair
   boot_diagnostics              = var.boot_diagnostics
   capacity_reservation_group_id = var.capacity_reservation_group_id
@@ -42,7 +43,7 @@ module "nomad_cluster" {
   zone_balance                  = var.zone_balance
   zones                         = var.zones
 
-
+nsg_rules = local.nsg_rules
   depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_version.this, azurerm_bastion_host.example]
 }
 

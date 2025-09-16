@@ -23,7 +23,7 @@ extension = [{
   failure_suppression_enabled = false
   settings                    = "{\"port\":80,\"protocol\":\"http\",\"requestPath\":\"/index.html\"}"
 }]
-instances = 1
+instances = 3
 network_interface = [{
   name = "VMSS-NIC"
   ip_configuration = [{

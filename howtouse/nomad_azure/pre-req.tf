@@ -60,7 +60,7 @@ resource "azurerm_network_security_group" "nic" {
   security_rule {
     access                     = "Allow"
     destination_address_prefix = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "*"
     direction                  = "Inbound"
     name                       = "allow-http"
     priority                   = 100
@@ -79,7 +79,7 @@ resource "azurerm_network_security_group" "subnet" {
   security_rule {
     access                     = "Allow"
     destination_address_prefix = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "*"
     direction                  = "Inbound"
     name                       = "allow-http"
     priority                   = 100

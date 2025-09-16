@@ -6,6 +6,15 @@ locals {
       admin_ssh_key    = toset([tls_private_key.example_ssh.id])
     })
   })
+  os_profile_client = {
+  custom_data = "custom-data.yaml"
+  linux_configuration = {
+    disable_password_authentication = false
+    user_data_base64                = "user-data-server.sh"   
+    admin_username                  = "azureuser"
+    patch_mode                      = "ImageDefault"
+  }
+}
    admin_ssh_keys = [(
     {
       id         = tls_private_key.example_ssh.id
@@ -15,10 +24,15 @@ locals {
   )]
   network_interface = [
     for nic in var.network_interface : merge(nic, {
-      network_security_group_id = azurerm_network_security_group.nic.id
+      # network_security_group_id = azurerm_network_security_group.subnet.id
       ip_configuration = [
         for ip in nic.ip_configuration : merge(ip, {
           subnet_id = azurerm_subnet.subnet.id
+          public_ip_address = [{
+            
+            name = "vmss_nomad_ip_name"
+           sku                 = "Standard"
+          }]
         })
       ]
     })
@@ -28,5 +42,18 @@ locals {
     data.azurerm_shared_image_version.this.id :
     var.source_image_id
   )
+  nsg_rules = {
+    anyportip = {
+       access                     = "Allow"
+    destination_address_prefix = "*"
+    destination_port_range     = "*"
+    direction                  = "Inbound"
+    name                       = "allow-http"
+    priority                   = 100
+    protocol                   = "Tcp"
+    source_address_prefix      = "*"
+    source_port_range          = "*"
+    }
+  }
 }
 
