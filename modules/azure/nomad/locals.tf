@@ -15,7 +15,7 @@ locals {
       }
     )
   }
-  #Default NSG Rules for Nomad Cluster
+  #Default NSG Rules for Nomad Cluster Server and Client
   nsg_rules = {
     "ssh_ingress" = {
       name                       = "nsgr-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-ssh-ingress"
