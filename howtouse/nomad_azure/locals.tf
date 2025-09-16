@@ -6,6 +6,13 @@ locals {
       admin_ssh_key    = toset([tls_private_key.example_ssh.id])
     })
   })
+   admin_ssh_keys = [(
+    {
+      id         = tls_private_key.example_ssh.id
+      public_key = tls_private_key.example_ssh.public_key_openssh
+      username   = "azureuser"
+    }
+  )]
   network_interface = [
     for nic in var.network_interface : merge(nic, {
       network_security_group_id = azurerm_network_security_group.nic.id
