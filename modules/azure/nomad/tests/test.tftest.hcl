@@ -86,7 +86,7 @@ run "apply" {
   override_module {
     target = module.avm_res_network_networksecuritygroup
     outputs = {
-      resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkSecurityGroups/networkSecurityGroupName"
+      resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkSecurityGroups/networkSecurityGroupNameOverride"
     }
   }
   override_module {
@@ -113,11 +113,7 @@ run "apply" {
               public_ip_address_name        = "vm-nomad-client-eus-sbx-pip"
             }
           }
-          network_security_groups = {
-            network_interface_1 = {
-              network_security_group_resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkSecurityGroups/networkSecurityGroupName"
-            }
-          }
+          
         }
       }
     }

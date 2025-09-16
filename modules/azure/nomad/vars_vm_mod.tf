@@ -81,7 +81,7 @@ variable "vm_mod_network_interfaces" {
       network_security_groups = optional(
         map(
           object({
-            network_security_group_resource_id = string
+            network_security_group_resource_id = optional(string)
           })
         ),
         {}

@@ -21,3 +21,6 @@ output "vmss_prop" {
   sensitive = true
 }
 
+output "licasd" {
+  value = local.network_interfaces
+}

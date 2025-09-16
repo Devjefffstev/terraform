@@ -1,4 +1,6 @@
 locals {
+  ## VMSS module
+  ## Force to use `network_security_group` if it is not set by the user.
   network_interface = [
     for ni in var.network_interface : merge(
       ni,
@@ -15,6 +17,28 @@ locals {
       }
     )
   }
+
+## VM Module 
+network_interfaces ={
+  for key_nic, nic in var.vm_mod_network_interfaces : key_nic => merge(
+    nic, 
+    {
+        network_security_groups = nic.network_security_groups != null ? {
+          for nsgk, nsg in try(nic.network_security_groups,{}) : nsgk => merge(
+            nsg,
+            {
+            network_security_group_resource_id = (
+                nsg.network_security_group_resource_id == null ? module.        avm_res_network_networksecuritygroup.resource_id : 
+                  nsg.network_security_group_resource_id
+              )
+          })
+        } : null
+
+    }
+  )
+}
+
+
   #Default NSG Rules for Nomad Cluster Server and Client
   nsg_rules = {
     "ssh_ingress" = {
