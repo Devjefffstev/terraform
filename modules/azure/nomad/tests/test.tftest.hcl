@@ -12,7 +12,7 @@
 # }
 
 mock_provider "azurerm" {
-  alias = "fake"  
+  alias = "fake"
   mock_resource "azurerm_subnet" {
     defaults = {
       id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
@@ -43,13 +43,18 @@ variables {
     {
       name = "VMSS-NIC"
       ip_configuration = [{
-        name      = "VMSS-IPConfig"
+        name = "VMSS-IPConfig"
         # subnet_id = run.apply_infra_pre_req.subnet_id
         subnet_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-nomad-test-001/providers/Microsoft.Network/virtualNetworks/MyVNet/subnets/MySubnet"
       }]
     }
   ]
-source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
+  source_image_id = "/subscriptions/4ccb67b6-0e4c-45c5-88bf-ba71125163e1/resourceGroups/rg-my-image-build/providers/Microsoft.Compute/images/ubuntu-custom-image"
+
+  ## variables for VM avm module
+
+
+
 }
 
 # run "apply_infra_pre_req" {
@@ -88,6 +93,33 @@ run "apply" {
     target = module.vmss
     outputs = {
       resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/my-resource-group/providers/Microsoft.Compute/virtualMachineScaleSets/my-vmss"
+    }
+  }
+  override_module {
+    target = module.avm_res_compute_virtualmachine
+    outputs = {
+      admin_generated_ssh_private_key = "hardcoded-ssh-private-key"
+      admin_password                  = "hardcoded-admin-password"
+      admin_ssh_keys                  = ["ssh-rsa AAAAB3... hardcoded-key"]
+      admin_username                  = "hardcoded-admin-user"
+      network_interfaces = {
+        network_interface_1 = {
+          name = "vm-nomad-client-eus-sbx-nic"
+          ip_configurations = {
+            ip_configuration_1 = {
+              name                          = "vm-nomad-client-eus-sbx-ipconfig"
+              private_ip_subnet_resource_id = "/subscriptions/ae8fb469-4dad-482c-80e7-00bde08748b1/resourceGroups/rg-nomad-eus-sbx/providers/Microsoft.Network/virtualNetworks/vnet-nomad-eus-sbx/subnets/default"
+              create_public_ip_address      = true
+              public_ip_address_name        = "vm-nomad-client-eus-sbx-pip"
+            }
+          }
+          network_security_groups = {
+            network_interface_1 = {
+              network_security_group_resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkSecurityGroups/networkSecurityGroupName"
+            }
+          }
+        }
+      }
     }
   }
   module {

@@ -151,7 +151,7 @@ variable "vm_mod_account_credentials" {
 variable "vm_mod_additional_unattend_contents" {
   type = list(object({ content = string
   setting = string }))
-  default = {}
+  default = []
 }
 
 variable "vm_mod_allow_extension_operations" {

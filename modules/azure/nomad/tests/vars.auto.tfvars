@@ -1,6 +1,6 @@
 # Core required variables
 resource_group_name = "my-rg-pricipal"
-location = "eastus"
+location            = "eastus"
 environment         = "test"
 app_function_chatam = "nomad"
 
@@ -23,4 +23,26 @@ sku_name       = "Standard_B1s"
 admin_password = "aziresdf324#@!"
 tags = {
 
+}
+
+## Azure VM 
+vm_mod_name = "azure-vm-module"
+vm_mod_zone = null
+vm_mod_network_interfaces = {
+  network_interface_1 = {
+    name = "vm-nomad-client-eus-sbx-nic"
+    ip_configurations = {
+      ip_configuration_1 = {
+        name                          = "vm-nomad-client-eus-sbx-ipconfig"
+        private_ip_subnet_resource_id = "/subscriptions/ae8fb469-4dad-482c-80e7-00bde08748b1/resourceGroups/rg-nomad-eus-sbx/providers/Microsoft.Network/virtualNetworks/vnet-nomad-eus-sbx/subnets/default"
+        create_public_ip_address      = true
+        public_ip_address_name        = "vm-nomad-client-eus-sbx-pip"
+      }
+    }
+    network_security_groups = {
+      network_interface_1 = {
+        network_security_group_resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkSecurityGroups/networkSecurityGroupName"
+      }
+    }
+  }
 }
