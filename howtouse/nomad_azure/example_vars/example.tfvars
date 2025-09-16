@@ -23,7 +23,7 @@ extension = [{
   failure_suppression_enabled = false
   settings                    = "{\"port\":80,\"protocol\":\"http\",\"requestPath\":\"/index.html\"}"
 }]
-instances = 3
+instances = 1
 network_interface = [{
   name = "VMSS-NIC"
   ip_configuration = [{
@@ -47,3 +47,20 @@ tags = {
   applicationRole = "server"
   ConsulAutoJoin  = "auto-join"
 }
+
+
+## Module avm VM Variables 
+vm_mod_os_type = "Linux"
+vm_mod_zone = null
+vm_mod_network_interfaces = {
+    network_interface_1 = {
+      name = "vm-nomad-server-nic"
+      ip_configurations = {
+        ip_configuration_1 = {
+          name                          = "vm-nomad-server-ipconfig"          
+          create_public_ip_address      = true
+          public_ip_address_name        = "vm-nomad-server-pip"
+        }
+      }    
+    }
+  }

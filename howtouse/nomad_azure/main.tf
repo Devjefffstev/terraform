@@ -42,8 +42,23 @@ module "nomad_cluster_client" {
   upgrade_policy                = var.upgrade_policy
   zone_balance                  = var.zone_balance
   zones                         = var.zones
+  nsg_rules = local.nsg_rules
 
-nsg_rules = local.nsg_rules
+  ## VM AVM Module Configuration
+
+  vm_mod_name = "${var.vmss_name}-srv"
+  vm_mod_os_type = var.vm_mod_os_type
+  vm_mod_zone = var.vm_mod_zone
+  vm_mod_network_interfaces = local.network_interfaces
+  vm_mod_source_image_resource_id = local.vm_mod_source_image_resource_id
+  vm_mod_account_credentials = local.account_credentials
+  vm_mod_custom_data = local.custom_data
+
+  vm_mod_tags = var.tags
+
+
+  
+
   depends_on = [azurerm_nat_gateway.this, azurerm_network_security_group.nic, azurerm_subnet.subnet, azurerm_resource_group.nomad, azurerm_virtual_network.this, azurerm_subnet_network_security_group_association.this, azurerm_nat_gateway_public_ip_association.this, module.az_compute_galley, data.azurerm_shared_image_version.this, azurerm_bastion_host.example]
 }
 
