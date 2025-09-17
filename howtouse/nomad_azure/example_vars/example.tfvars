@@ -23,7 +23,7 @@ extension = [{
   failure_suppression_enabled = false
   settings                    = "{\"port\":80,\"protocol\":\"http\",\"requestPath\":\"/index.html\"}"
 }]
-instances = 1
+instances = 2
 network_interface = [{
   name = "VMSS-NIC"
   ip_configuration = [{
@@ -34,7 +34,8 @@ os_profile = {
   custom_data = "custom-data.yaml"
   linux_configuration = {
     disable_password_authentication = false
-    user_data_base64                = "user-data-server.sh"   
+    # user_data_base64                = "user-data-server.sh"   
+    user_data_base64                = "user-data-client.sh"   
     admin_username                  = "azureuser"
     patch_mode                      = "ImageDefault"
   }
@@ -44,7 +45,7 @@ sku_name = "Standard_B1s"
 tags = {
   environment     = "dev"
   type            = "nomad"
-  applicationRole = "server"
+  # applicationRole = "server"
   ConsulAutoJoin  = "auto-join"
 }
 

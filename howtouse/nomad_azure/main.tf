@@ -45,7 +45,7 @@ module "nomad_cluster_client" {
   nsg_rules                     = local.nsg_rules
 
   ## VM AVM Module Configuration
-  vm_mod_server_count             = 2
+  vm_mod_server_count             = 1
   vm_mod_name                     = "${var.vmss_name}-srv"
   vm_mod_os_type                  = var.vm_mod_os_type
   vm_mod_zone                     = var.vm_mod_zone
@@ -76,7 +76,7 @@ resource "terraform_data" "packer_image" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      IMAGE_NAME="${var.azurerm_shared_image_version_object.name}"
+      IMAGE_VERSION="${var.azurerm_shared_image_version_object.name}"
       RESOURCE_GROUP="${var.azurerm_shared_image_version_object.resource_group_name}"
       GALLERY_NAME="${var.azurerm_shared_image_version_object.gallery_name}"
       IMAGE_DEFINITION="${var.azurerm_shared_image_version_object.image_name}"
@@ -93,7 +93,7 @@ resource "terraform_data" "packer_image" {
         --gallery-image-version "$IMAGE_VERSION" \
         --created \
         --timeout "$TIMEOUT" \
-        --exists -o json)
+         )
 
       # Check the result
       if [ "$RESULT" == "{}" ]; then
@@ -102,7 +102,8 @@ resource "terraform_data" "packer_image" {
       elif [ $? -eq 0 ]; then
         echo "Image version $IMAGE_VERSION has been successfully created!"
       else
-        echo "Image version $IMAGE_VERSION has been successfully created!"
+        echo "Image version $IMAGE_VERSION already exists!"
+        
       fi
      
     EOT

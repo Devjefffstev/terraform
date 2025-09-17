@@ -61,17 +61,26 @@ locals {
     }
     password_authentication_disabled = false
   }
-
-  custom_data = (base64encode(templatefile("user-data-server.sh", {
-    region                    = var.location
-    cloud_env                 = "azure"
-    server_count              = "${var.vm_mod_server_count}"
-    retry_join                = local.retry_join
-    nomad_binary              = var.nomad_binary
-    nomad_version             = var.nomad_version
-    nomad_consul_token_id     = var.nomad_id
+custom_data    = "${base64encode(templatefile("${path.module}/shared/data-scripts/user-data-server.sh", {
+      region                    = var.location
+      cloud_env                 = "azure"
+  server_count              = "${var.vm_mod_server_count}"
+      retry_join                = local.retry_join
+      nomad_binary              = var.nomad_binary
+      nomad_consul_token_id     = var.nomad_id
     nomad_consul_token_secret = var.nomad_secret
-  })))
+  }))}"
+
+  # custom_data = (base64encode(templatefile("user-data-server.sh", {
+  #   region                    = var.location
+  #   cloud_env                 = "azure"
+  #   server_count              = "${var.vm_mod_server_count}"
+  #   retry_join                = local.retry_join
+  #   nomad_binary              = var.nomad_binary
+  #   nomad_version             = var.nomad_version
+  #   nomad_consul_token_id     = var.nomad_id
+  #   nomad_consul_token_secret = var.nomad_secret
+  # })))
 
   ## General variables 
   vm_mod_source_image_resource_id = local.source_image_id

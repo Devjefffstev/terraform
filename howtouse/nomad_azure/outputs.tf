@@ -4,7 +4,7 @@ output "private_key" {
 }
 
 output "vm_mod_network_interfaces_root" {
-  value = module.nomad_cluster_client.vm_mod_network_interfaces
+  value = module.nomad_cluster_client.vm_mod_network_interfaces 
 }
 
 # output "nomad_ip" {
