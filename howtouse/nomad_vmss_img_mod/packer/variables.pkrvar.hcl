@@ -1,0 +1,8 @@
+location                        = "East US"
+os_type                         = "Linux"
+image_publisher                 = "Canonical"
+image_offer                     = "0001-com-ubuntu-server-jammy"
+image_sku                       = "22_04-lts-gen2"
+vm_size                         = "Standard_B2s"
+managed_image_name              = "ubuntu-custom-image"
+managed_image_resource_group_name = "rg-my-image-build"
