@@ -80,21 +80,31 @@ resource "terraform_data" "packer_image" {
       RESOURCE_GROUP="${var.azurerm_shared_image_version_object.resource_group_name}"
       GALLERY_NAME="${var.azurerm_shared_image_version_object.gallery_name}"
       IMAGE_DEFINITION="${var.azurerm_shared_image_version_object.image_name}"
+      TIMEOUT=1800 
 
-      echo "Starting to check if the image $IMAGE_NAME exists in resource group $RESOURCE_GROUP, gallery $GALLERY_NAME, and image definition $IMAGE_DEFINITION..."
 
-      while true; do
-        if az sig image-version show \
-          --resource-group "$RESOURCE_GROUP" \
-          --gallery-name "$GALLERY_NAME" \
-          --gallery-image-definition "$IMAGE_DEFINITION" \
-          --gallery-image-version "$IMAGE_NAME" &>/dev/null; then
-          echo "Image $IMAGE_NAME exists!"
-          exit 0
-        fi
-        echo "Image $IMAGE_NAME does not exist yet. Checking again in 15 minutes..."
-        sleep 900
-      done
+     echo "Waiting for image version $IMAGE_VERSION to be created in resource group $RESOURCE_GROUP, gallery $GALLERY_NAME, and image definition $IMAGE_DEFINITION..."
+
+      # Wait for the image version to exist
+      RESULT=$(az sig image-version wait \
+        --resource-group "$RESOURCE_GROUP" \
+        --gallery-name "$GALLERY_NAME" \
+        --gallery-image-definition "$IMAGE_DEFINITION" \
+        --gallery-image-version "$IMAGE_VERSION" \
+        --created \
+        --timeout "$TIMEOUT" \
+        --exists -o json)
+
+      # Check the result
+      if [ "$RESULT" == "{}" ]; then
+        echo "Timeout reached, and the image version $IMAGE_VERSION does not exist."
+        exit 1
+      elif [ $? -eq 0 ]; then
+        echo "Image version $IMAGE_VERSION has been successfully created!"
+      else
+        echo "Image version $IMAGE_VERSION has been successfully created!"
+      fi
+     
     EOT
   }
 
