@@ -59,11 +59,11 @@ module "avm_res_network_networksecuritygroup" {
 module "avm_res_compute_virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.19.3"
-
+  count   = var.vm_mod_server_count
   # Required variables
   location            = var.location
-  name                = var.vm_mod_name
-  network_interfaces  = var.vm_mod_network_interfaces
+  name                = "${var.vm_mod_name}-${count.index}"
+  network_interfaces  = local.vm_mod_network_interfaces_tf[(tonumber("${count.index}"))]
   resource_group_name = var.resource_group_name
   zone                = var.vm_mod_zone
 

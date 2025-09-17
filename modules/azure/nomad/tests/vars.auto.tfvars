@@ -26,17 +26,18 @@ tags = {
 }
 
 ## Azure VM 
-vm_mod_name = "azure-vm-module"
+vm_mod_server_count = 2
+vm_mod_name = "az-vm-mod"
 vm_mod_zone = null
 vm_mod_network_interfaces = {
   network_interface_1 = {
-    name = "vm-nomad-client-eus-sbx-nic"
+    name = "vm-nomad-nic"
     ip_configurations = {
       ip_configuration_1 = {
-        name                          = "vm-nomad-client-eus-sbx-ipconfig"
+        name                          = "vm-nomad-ipconfig"
         private_ip_subnet_resource_id = "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/rg-nomad-eus-sbx/providers/Microsoft.Network/virtualNetworks/vnet-nomad-example/subnets/default"
         create_public_ip_address      = true
-        public_ip_address_name        = "vm-nomad-client-eus-sbx-pip"
+        public_ip_address_name        = "vm-nomad-pip"
       }
     }
     network_security_groups = {

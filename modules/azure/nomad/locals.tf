@@ -18,25 +18,68 @@ locals {
     )
   }
 
-## VM Module 
-network_interfaces ={
-  for key_nic, nic in var.vm_mod_network_interfaces : key_nic => merge(
-    nic, 
-    {
+  ## VM Module 
+
+  vm_mod_network_interfaces_tf = flatten([
+    for n in range((var.vm_mod_server_count)) : [
+      {
+        for key_nic, nic in var.vm_mod_network_interfaces : key_nic => merge(
+          nic,
+          {
+            name = "${nic.name}-${n}"
+            ip_configurations = {
+              for ip_key, ipconf in nic.ip_configurations : ip_key => merge(
+                ipconf,
+                {
+                  name                   = "${ipconf.name}-${n}"
+                  public_ip_address_name = "${ipconf.public_ip_address_name}-${n}"
+                }
+              )
+            }
+            network_security_groups = nic.network_security_groups != null ? {
+              for nsgk, nsg in try(nic.network_security_groups, {}) : nsgk => merge(
+                nsg,
+                {
+                  network_security_group_resource_id = (
+                    nsg.network_security_group_resource_id == null ? module.avm_res_network_networksecuritygroup.resource_id :
+                    nsg.network_security_group_resource_id
+                  )
+              })
+            } : null
+
+          }
+        )
+      }
+    ]
+  ])
+  vm_mod_network_interfaces = {
+    for key_nic, nic in var.vm_mod_network_interfaces : key_nic => merge(
+      nic,
+      {
+        name = "${nic.name}-${index(keys(var.vm_mod_network_interfaces), key_nic)}"
+        ip_configurations = {
+          for ip_key, ipconf in nic.ip_configurations : ip_key => merge(
+            ipconf,
+            {
+              name                   = "${ipconf.name}-${index(keys(nic.ip_configurations), ip_key)}"
+              public_ip_address_name = "${ipconf.public_ip_address_name}-${index(keys(nic.ip_configurations), ip_key)}"
+            }
+          )
+        }
         network_security_groups = nic.network_security_groups != null ? {
-          for nsgk, nsg in try(nic.network_security_groups,{}) : nsgk => merge(
+          for nsgk, nsg in try(nic.network_security_groups, {}) : nsgk => merge(
             nsg,
             {
-            network_security_group_resource_id = (
-                nsg.network_security_group_resource_id == null ? module.        avm_res_network_networksecuritygroup.resource_id : 
-                  nsg.network_security_group_resource_id
+              network_security_group_resource_id = (
+                nsg.network_security_group_resource_id == null ? module.avm_res_network_networksecuritygroup.resource_id :
+                nsg.network_security_group_resource_id
               )
           })
         } : null
 
-    }
-  )
-}
+      }
+    )
+  }
 
 
   #Default NSG Rules for Nomad Cluster Server and Client
