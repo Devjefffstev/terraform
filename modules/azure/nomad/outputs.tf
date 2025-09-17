@@ -20,3 +20,8 @@ output "vmss_prop" {
   value     = module.vmss
   sensitive = true
 }
+
+## VM avm Network Interfaces
+output "vm_mod_network_interfaces" {
+  value = module.avm_res_compute_virtualmachine.*.network_interfaces
+}
