@@ -9,23 +9,22 @@ variable "nomad_binary" {
 }
 
 variable "azuread_application_registration_client_id" {
-  type    = string
- 
+  type = string
+
 }
 
 variable "azuread_application_registration_client_secret" {
-  type    = string
-  
+  type = string
+
 }
 
 variable "nomad_id" {
   type    = string
   default = "2f3fee4d-2216-8345-05e2-4e265d3588b8"
 }
-
-variable "nomad_server_count" {
-  type    = string
-  default = 3
+variable "nomad_version" {
+  description = "The version of the Nomad binary to install."
+  default     = "1.5.0"
 }
 
 locals {

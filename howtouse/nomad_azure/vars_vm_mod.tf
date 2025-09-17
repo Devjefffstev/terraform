@@ -1,3 +1,7 @@
+variable "vm_mod_server_count" {
+  type    = number
+  default = 1
+}
 variable "vm_mod_network_interfaces" {
   type = map(
     object({
