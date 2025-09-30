@@ -14,8 +14,8 @@ on:
     paths:
       - modules/**
   pull_request:
-    # branches:
-    #   - main
+    branches:
+      - main
     paths:
       - modules/**
 
