@@ -12,4 +12,3 @@ output "azurerm_policy_definition_properties" {
   description = "All properties of the Policy Definition"
   value       = azurerm_policy_definition.this
 }
-
