@@ -1,4 +1,4 @@
-name: ReleasePleaseWorkflow
+name: Terraform_Modules_ReleasePleaseWorkflow
 
 on:
   workflow_dispatch:
