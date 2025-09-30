@@ -45,7 +45,7 @@ module "nomad_cluster_client" {
   nsg_rules                     = local.nsg_rules
 
   ## VM AVM Module Configuration
-  vm_mod_server_count             = 1
+  vm_mod_server_count             = var.vm_mod_server_count
   vm_mod_name                     = "${var.vmss_name}-srv"
   vm_mod_os_type                  = var.vm_mod_os_type
   vm_mod_zone                     = var.vm_mod_zone

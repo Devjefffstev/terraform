@@ -55,7 +55,7 @@ locals {
   account_credentials = {
     admin_credentials = {
       username = "ubuntu"
-      password = "azure123!!ASD"
+      password = var.admin_password
       # ssh_keys                           = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3VgU6vbzgBk9XPqOIIia7eK6RrbWvpM+BXoilssi6GskaK90L29G3tqrUiSrdzu9ifEwToXo6XBky0xunb8kGqCNkp0qNwMYx+YzspoDzz/Rzyy4/gOxVbGdWFsmaS90p8Xtyx136TKtnSDmk8XlCMQX3mUrIDxEX6tGr3enkdEpL72fv+//Ge6NV6dGw7eHs2+oY3HJYJ9mYNW2x5G4DBioJljhAkQMljW3pFRclYPe8xTJFD6BHNP6iyOgzeNwFxxQL20VqhG9iQYPKPx6tMnX03NYsv/3LGx56T8rRQf3bQCVWuUVrmcegnQrGANc4NZOiRH14rTU+YJj2zrUYwkuXxjZMxpACosO8k2obcVQZRkZ6e1u8VpXbIl9IPSIfV2wfviglXqGg2U3uIdGtyag3jLxriYPEGKOOtAVN/pzwqAk3uwEiIbvOLbXTJ0cqD/bvqPqOUzHTMhldlBpAlbHuLeUt5zUICrdRWRy8DlqHGvdoO0S221BtQhcemXM="]
       generate_admin_password_or_ssh_key = false
     }
@@ -102,5 +102,6 @@ custom_data    = "${base64encode(templatefile("${path.module}/shared/data-script
       source_port_range          = "*"
     }
   }
+  
 }
 

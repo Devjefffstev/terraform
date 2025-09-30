@@ -48,14 +48,14 @@ build {
     environment_vars = ["INSTALL_NVIDIA_DOCKER=false", "CLOUD_ENV=azure"]
     script           = "../shared/scripts/setup.sh"
   }
-  ##The following provisioner snippet shows how to deprovision a Linux VM. Deprovision should be the last operation executed by a build.
-#   provisioner "shell" {
-#    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-#    inline = [
-#         "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
-#    ]
-#    inline_shebang = "/bin/sh -x"
-# }
+  #The following provisioner snippet shows how to deprovision a Linux VM. Deprovision should be the last operation executed by a build.
+  provisioner "shell" {
+   execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+   inline = [
+        "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+   ]
+   inline_shebang = "/bin/sh -x"
+}
 
 }
 

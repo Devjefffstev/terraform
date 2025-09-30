@@ -23,7 +23,7 @@ extension = [{
   failure_suppression_enabled = false
   settings                    = "{\"port\":80,\"protocol\":\"http\",\"requestPath\":\"/index.html\"}"
 }]
-instances = 2
+instances = 1
 network_interface = [{
   name = "VMSS-NIC"
   ip_configuration = [{
@@ -51,6 +51,7 @@ tags = {
 
 
 ## Module avm VM Variables 
+  vm_mod_server_count             = 1
 vm_mod_os_type = "Linux"
 vm_mod_zone = null
 vm_mod_network_interfaces = {
