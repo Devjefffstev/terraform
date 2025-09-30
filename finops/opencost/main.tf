@@ -1,9 +1,20 @@
+# How to run this example
+# 1. Select an user in AWS IAM with enough permissions to create the resources
+# 2. Create a profile in your AWS credentials file (~/.aws/credentials)
+# 3. Run terraform init with your backend configuration
+#    terraform init -backend-config="backend-account-6311.backend"
+# 4. Run terraform plan with your aws profile and the user selected
+#     terraform plan -var=aws_profile="account6311" -var=principal_arn_user="arn:aws:iam::124345666311:user/jeffnoprod" -out="plan.tfplan"
+# 5. Run terraform apply
+#     terraform apply "plan.tfplan"
+
 module "aws_eks" {
   source = "../../howtouse/aws/eks-cluster"
   # aws_access_key   = var.aws_access_key
   # aws_secret_key   = var.aws_secret_key
   eks_cluster_name   = "eks-opencost-${local.unique_value}"
-  principal_arn_user = "arn:aws:iam::124345666311:user/jeffnoprod"
+  # Send a arn user in order to see the resources created 
+  principal_arn_user = var.principal_arn_user  
 }
 
 module "helm_charts" {
@@ -258,4 +269,5 @@ resource "kubernetes_secret_v1" "aws_secret" {
   }
 
   type = "Opaque"
+  depends_on = [module.helm_charts, module.aws_eks]
 }
