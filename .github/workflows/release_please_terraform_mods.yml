@@ -87,7 +87,7 @@ jobs:
 
   package-release-please:
     name: package-release-please
-    uses: ./.github/workflows/reusable_workflows/release-please.yml
+    uses: ./.github/workflows/rwf_release_please.yml ## call reusable workflow
     needs: find-release-changes
     ## validate that there are changes to process and create a release on push to main
     if: needs.find-release-changes.outputs.module-paths != '[]' && github.event_name == 'push' && github.ref == 'refs/heads/main'
