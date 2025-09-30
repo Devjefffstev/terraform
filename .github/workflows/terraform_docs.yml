@@ -9,6 +9,8 @@ on:
                 default: 'info'
                 type: string  
     push:
+        branches-ignore:
+          - main
         paths:
         - modules/**
 
