@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "main" {
     vm_size    = var.default_node_pool.vm_size
   }
   identity {
-    type = var.identity.type
+    type         = var.identity.type
     identity_ids = var.identity.identity_ids
   }
   tags = var.tags

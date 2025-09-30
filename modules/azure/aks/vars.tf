@@ -40,7 +40,7 @@ variable "identity" {
 variable "sku_tier" {
   description = "The SKU tier for the AKS cluster. Defaults to 'Free'."
   type        = string
-  default     = "Free"  
+  default     = "Free"
 }
 variable "tags" {
   description = "A map of tags to assign to the AKS cluster."
