@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: find-changes
     steps:
-     - run: ${{ needs.find-changes.outputs.changed-modules }}
+     - run: echo ${{ needs.find-changes.outputs.changed-modules }}
 
 
   update-readme:
