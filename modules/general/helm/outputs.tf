@@ -1,4 +1,4 @@
 output "helm_releases" {
-  value = helm_release.main
+  value     = helm_release.main
   sensitive = true
 }
