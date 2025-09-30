@@ -10,7 +10,7 @@ on:
         type: string  
   push:
     branches:
-      - main          
+      # - main          
     paths:
       - modules/**
   pull_request:
@@ -69,8 +69,11 @@ jobs:
             let modules_paths = new Set();
             for (const change of changes) {
               if (change.startsWith(process.env.PATH_PREFIX)) {
-                  const library = change.split('/')[2];
-                  modules_paths.add(library);
+                  const pathParts = change.split('/');
+                  if (pathParts.length >= 3) {
+                      const library = pathParts[1] + '/' + pathParts[2];
+                      modules_paths.add(library);
+                  }
               };
             }
             modules_paths = Array.from(modules_paths);
@@ -90,8 +93,8 @@ jobs:
     uses: ./.github/workflows/rwf_release_please.yml ## call reusable workflow
     needs: find-release-changes
     ## validate that there are changes to process and create a release on push to main
-    if: needs.find-release-changes.outputs.module-paths != '[]' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    strategy:
+    if: needs.find-release-changes.outputs.module-paths != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    strategy: 
       fail-fast: false
       matrix:
         module: ${{fromJson(needs.find-release-changes.outputs.module-paths)}}
