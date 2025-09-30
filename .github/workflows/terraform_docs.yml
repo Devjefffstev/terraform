@@ -1,9 +1,16 @@
 name: Terraform Docs
 
 on:
-  push:
-    paths:
-      - modules/**
+    workflow_dispatch:
+        inputs:
+            log-level:
+                description: 'Log level (trace, debug, info, warn, error, fatal, panic)'
+                required: false
+                default: 'info'
+                type: string  
+    push:
+        paths:
+        - modules/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
