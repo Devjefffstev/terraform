@@ -1,0 +1,100 @@
+name: Terraform Test
+# on: workflow_dispatch
+on:
+  workflow_call:
+    inputs:
+      tf_working_directory:
+        description: 'Terraform working directory'
+        required: true
+        type: string
+        default: './terraform'
+      tf_version:
+        description: 'Terraform version to use'
+        required: false
+        type: string
+        default: '1.12.x'
+
+env:
+  # Checkov results file names
+  RESULTS_ARTIFACT_NAME: checkov-results
+  RESULTS_FILE_CSV: checkov-results.csv
+  RESULTS_FILE_MD: checkov-results.md
+  RESULTS_FILE_SARIF: checkov-results.sarif
+
+  # GitHub App authentication variables for github provider
+  GITHUB_APP_ID: ${{ secrets.APP_ID }}
+  GITHUB_APP_INSTALLATION_ID: ${{ secrets.APP_INSTALLATION_ID }}
+  GITHUB_APP_PEM_FILE: ${{ secrets.APP_PEM_FILE }}
+
+jobs:
+  terraform-test:
+    defaults:
+      run:
+        working-directory: ${{ inputs.tf_working_directory }}
+    name: Terraform Test
+    runs-on:
+      group: cf-vnet-access
+      labels: cf-vnet-2cpu-8gb-ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.tf_version }}
+
+      - name: Terraform Fmt
+        run: |
+          echo "## Terraform Fmt" >> $GITHUB_STEP_SUMMARY
+          if terraform fmt -check -diff -recursive > fmt-diff.txt 2>&1; then
+            echo "✅ No formatting issues found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Formatting issues found:" >> $GITHUB_STEP_SUMMARY
+            echo '```diff' >> $GITHUB_STEP_SUMMARY
+            cat fmt-diff.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: |
+          echo "## Terraform Validate" >> $GITHUB_STEP_SUMMARY
+          if terraform validate -no-color > validate-summary.txt 2>&1; then
+            echo -n "✅ " >> $GITHUB_STEP_SUMMARY && cat validate-summary.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Terraform configuration is invalid. See details below." >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat validate-summary.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Terraform Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: ${{ inputs.tf_working_directory }}
+          output_format: sarif
+          output_file_path: ${{ inputs.tf_working_directory }}/${{ env.RESULTS_FILE_SARIF }}
+          soft_fail: true
+
+      - name: Install csv2md and sarif-tools
+        run: pipx install csv2md==1.4.0 sarif-tools==3.0.4
+
+      - name: Convert Checkov SARIF to CSV
+        run: sarif csv --output ${{ env.RESULTS_FILE_CSV }} ${{ env.RESULTS_FILE_SARIF }}
+
+      - name: Convert Checkov CSV to Markdown
+        run: cat ${{ env.RESULTS_FILE_CSV }} | csv2md > ${{ env.RESULTS_FILE_MD }}
+
+      - name: Output checkov to GitHub Summary
+        run: |
+          echo "## Checkov Results" >> $GITHUB_STEP_SUMMARY
+          # Count lines in the Markdown file
+          if [ -s "${{ env.RESULTS_FILE_MD }}" ] && [ "$(wc -l < ${{ env.RESULTS_FILE_MD }})" -gt 2 ]; then
+            cat ${{ env.RESULTS_FILE_MD }} >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No Checkov issues found." >> $GITHUB_STEP_SUMMARY
+          fi
