@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.7.0...aks-component@v0.8.0) (2025-09-30)
+
+
+### Features
+
+* add aks versioning ([96a31bc](https://github.com/Devjefffstev/terraform/commit/96a31bcb691ec46edadd3a8522e9398c48afdca9))
+* add aks versioning ([db21156](https://github.com/Devjefffstev/terraform/commit/db21156f5001861dff64724bcaac7b0313626df3))
+* add path modules ([99407fc](https://github.com/Devjefffstev/terraform/commit/99407fc89b96c28f82c7f17754e329e2da327075))
+* blank spaces ([51a8b06](https://github.com/Devjefffstev/terraform/commit/51a8b062f0186835d0a39cb4ae6f6dcbc14cd705))
+* double add space ([992d0c8](https://github.com/Devjefffstev/terraform/commit/992d0c8d5c6cf6040d67abead89493ef219de586))
+* remove sace ([b27e10f](https://github.com/Devjefffstev/terraform/commit/b27e10f4852a63bc0688f49ae501b4d556836faa))
+* remove space ([6d3b8f2](https://github.com/Devjefffstev/terraform/commit/6d3b8f2e52fe6ef2a91710b79e61fec3ae2af313))
+
 ## [0.7.0](https://github.com/Devjefffstev/terraform/compare/aks-component@v0.6.0...aks-component@v0.7.0) (2025-08-12)
 
 
