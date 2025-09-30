@@ -1,0 +1,133 @@
+module "vmss" {
+  source                        = "Azure/avm-res-compute-virtualmachinescaleset/azurerm"
+  version                       = "0.8.0"
+  location                      = var.location
+  extension_protected_setting   = var.extension_protected_setting
+  name                          = var.vmss_name
+  resource_group_name           = var.resource_group_name
+  user_data_base64              = var.user_data_base64
+  additional_capabilities       = var.additional_capabilities
+  admin_password                = var.admin_password
+  admin_ssh_keys                = var.admin_ssh_keys
+  automatic_instance_repair     = var.automatic_instance_repair
+  boot_diagnostics              = var.boot_diagnostics
+  capacity_reservation_group_id = var.capacity_reservation_group_id
+  data_disk                     = var.data_disk
+  enable_telemetry              = var.enable_telemetry
+  encryption_at_host_enabled    = var.encryption_at_host_enabled
+  eviction_policy               = var.eviction_policy
+  extension                     = var.extension
+  extension_operations_enabled  = var.extension_operations_enabled
+  extensions_time_budget        = var.extensions_time_budget
+  instances                     = var.instances
+  license_type                  = var.license_type
+  lock                          = var.lock
+  managed_identities            = var.managed_identities
+  max_bid_price                 = var.max_bid_price
+  network_interface             = local.network_interface
+  os_disk                       = var.os_disk
+  os_profile                    = var.os_profile
+  plan                          = var.plan
+  platform_fault_domain_count   = var.platform_fault_domain_count
+  priority                      = var.priority
+  priority_mix                  = var.priority_mix
+  proximity_placement_group_id  = var.proximity_placement_group_id
+  role_assignments              = var.role_assignments
+  single_placement_group        = var.single_placement_group
+  sku_name                      = var.sku_name
+  source_image_id               = var.source_image_id
+  source_image_reference        = var.source_image_reference
+  tags                          = var.tags
+  termination_notification      = var.termination_notification
+  timeouts                      = var.timeouts
+  upgrade_policy                = var.upgrade_policy
+  zone_balance                  = var.zone_balance
+  zones                         = var.zones
+
+}
+
+## Security Groups and Rules for Nomad Cluster
+module "avm_res_network_networksecuritygroup" {
+  source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version             = "0.5.0"
+  location            = var.location
+  name                = "nsg-${var.environment}-${var.app_function_chatam}-${lower(replace(var.location, " ", ""))}-001"
+  resource_group_name = var.resource_group_name
+  security_rules      = local.merge_rules
+}
+
+module "avm_res_compute_virtualmachine" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "0.19.3"
+  count   = var.vm_mod_server_count
+  # Required variables
+  location            = var.location
+  name                = "${var.vm_mod_name}-${count.index}"
+  network_interfaces  = local.vm_mod_network_interfaces_tf[(tonumber("${count.index}"))]
+  resource_group_name = var.resource_group_name
+  zone                = var.vm_mod_zone
+
+  # Optional variables (These represent all VM-related configuration options) 
+  account_credentials                                    = var.vm_mod_account_credentials
+  additional_unattend_contents                           = var.vm_mod_additional_unattend_contents
+  allow_extension_operations                             = var.vm_mod_allow_extension_operations
+  availability_set_resource_id                           = var.vm_mod_availability_set_resource_id
+  azure_backup_configurations                            = var.vm_mod_azure_backup_configurations
+  boot_diagnostics                                       = var.vm_mod_boot_diagnostics
+  boot_diagnostics_storage_account_uri                   = var.vm_mod_boot_diagnostics_storage_account_uri
+  bypass_platform_safety_checks_on_user_schedule_enabled = var.vm_mod_bypass_platform_safety_checks_on_user_schedule_enabled
+  capacity_reservation_group_resource_id                 = var.vm_mod_capacity_reservation_group_resource_id
+  computer_name                                          = var.vm_mod_computer_name
+  custom_data                                            = var.vm_mod_custom_data
+  data_disk_managed_disks                                = var.vm_mod_data_disk_managed_disks
+  dedicated_host_group_resource_id                       = var.vm_mod_dedicated_host_group_resource_id
+  dedicated_host_resource_id                             = var.vm_mod_dedicated_host_resource_id
+  diagnostic_settings                                    = var.vm_mod_diagnostic_settings
+  disable_password_authentication                        = var.vm_mod_disable_password_authentication
+  disk_controller_type                                   = var.vm_mod_disk_controller_type
+  edge_zone                                              = var.vm_mod_edge_zone
+  enable_automatic_updates                               = var.vm_mod_enable_automatic_updates
+  enable_telemetry                                       = var.vm_mod_enable_telemetry
+  encryption_at_host_enabled                             = var.vm_mod_encryption_at_host_enabled
+  extensions                                             = var.vm_mod_extensions
+  extensions_time_budget                                 = var.vm_mod_extensions_time_budget
+  gallery_applications                                   = var.vm_mod_gallery_applications
+  generate_admin_password_or_ssh_key                     = var.vm_mod_generate_admin_password_or_ssh_key
+  generated_secrets_key_vault_secret_config              = var.vm_mod_generated_secrets_key_vault_secret_config
+  hotpatching_enabled                                    = var.vm_mod_hotpatching_enabled
+  license_type                                           = var.vm_mod_license_type
+  lock                                                   = var.vm_mod_lock
+  maintenance_configuration_resource_ids                 = var.vm_mod_maintenance_configuration_resource_ids
+  managed_identities                                     = var.vm_mod_managed_identities
+  max_bid_price                                          = var.vm_mod_max_bid_price
+  os_disk                                                = var.vm_mod_os_disk
+  os_type                                                = var.vm_mod_os_type
+  patch_assessment_mode                                  = var.vm_mod_patch_assessment_mode
+  patch_mode                                             = var.vm_mod_patch_mode
+  plan                                                   = var.vm_mod_plan
+  platform_fault_domain                                  = var.vm_mod_platform_fault_domain
+  priority                                               = var.vm_mod_priority
+  provision_vm_agent                                     = var.vm_mod_provision_vm_agent
+  proximity_placement_group_resource_id                  = var.vm_mod_proximity_placement_group_resource_id
+  public_ip_configuration_details                        = var.vm_mod_public_ip_configuration_details
+  reboot_setting                                         = var.vm_mod_reboot_setting
+  role_assignments                                       = var.vm_mod_role_assignments
+  role_assignments_system_managed_identity               = var.vm_mod_role_assignments_system_managed_identity
+  run_commands                                           = var.vm_mod_run_commands
+  run_commands_secrets                                   = var.vm_mod_run_commands_secrets
+  secrets                                                = var.vm_mod_secrets
+  secure_boot_enabled                                    = var.vm_mod_secure_boot_enabled
+  shutdown_schedules                                     = var.vm_mod_shutdown_schedules
+  sku_size                                               = var.vm_mod_sku_size
+  source_image_reference                                 = var.vm_mod_source_image_reference
+  source_image_resource_id                               = var.vm_mod_source_image_resource_id
+  tags                                                   = var.vm_mod_tags
+  termination_notification                               = var.vm_mod_termination_notification
+  timeouts                                               = var.vm_mod_timeouts
+  timezone                                               = var.vm_mod_timezone
+  user_data                                              = var.vm_mod_user_data
+  virtual_machine_scale_set_resource_id                  = var.vm_mod_virtual_machine_scale_set_resource_id
+  vm_additional_capabilities                             = var.vm_mod_vm_additional_capabilities
+  vtpm_enabled                                           = var.vm_mod_vtpm_enabled
+  winrm_listeners                                        = var.vm_mod_winrm_listeners
+}
