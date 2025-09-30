@@ -9,10 +9,10 @@ on:
                 default: 'info'
                 type: string  
     push:
-        branches-ignore:
-          - main
+        branches:
+            - main
         paths:
-        - modules/**
+            - modules/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref != 'refs/heads/main'
+    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: find-changes
     strategy:
       matrix:
@@ -97,6 +97,7 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest
+    if: needs.find-changes.outputs.changed-modules != '[]'
     needs: find-changes
     strategy:
       matrix: 
