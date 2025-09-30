@@ -75,7 +75,7 @@ jobs:
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref != 'refs/heads/main'
     needs: find-changes
     strategy:
       matrix:
