@@ -42,3 +42,18 @@ jobs:
          - run: |
              echo "Changed modules: ${{ needs.folder-change-detection.outputs.changed-modules }}"
     
+    terraform-plan:
+        name: Run Terraform Plan for changed modules HowToUse
+        needs: folder-change-detection
+        if: needs.folder-change-detection.outputs.changed-modules != '[]'
+        strategy:
+          fail-fast: false
+          matrix:
+            module: ${{ fromJson(needs.folder-change-detection.outputs.changed-modules) }}
+        uses: Devjefffstev/GitHub/.github/workflows/terraform_plan.yml@tf_rs
+        with: &env_vars
+            # use_github_token: true
+            tf_working_directory: ${{ needs.folder-change-detection.outputs.changed-modules }}
+            environment: general
+            region: eastus2
+        secrets: inherit

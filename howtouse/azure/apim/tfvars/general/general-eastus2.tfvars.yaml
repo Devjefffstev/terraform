@@ -1,0 +1,6 @@
+rg_name: &rg_name "my-resource-group"
+location: &location "eastus2"
+environment: &environment "dev"
+tags: &tags
+  owner: "jeffersonsoto"
+  project: "apim-demo"
