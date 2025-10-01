@@ -1,0 +1,32 @@
+name: Terraform Workflow to deploy how-to guides
+on: 
+    workflow_dispatch:
+        inputs:
+            log-level:
+                description: 'Log level (trace, debug, info, warn, error, fatal, panic)'
+                required: false
+                default: 'info'
+                type: string  
+    push:
+
+jobs: 
+    folder-change-detection:
+        name: Detect changes in how-to guides folder
+        runs-on: ubuntu-latest
+        outputs:
+            changed: ${{ steps.check_changes.outputs.changed }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Check for changes in how-to guides folder
+              id: check_changes
+              run: |
+                if git diff --name-only HEAD~1 HEAD | grep -q '^howtouse/'; then
+                  echo "Changes detected in how-to guides folder."
+                  echo "changed=true" >> $GITHUB_OUTPUT
+                else
+                  echo "No changes detected in how-to guides folder."
+                  echo "changed=false" >> $GITHUB_OUTPUT
+                fi
+    
