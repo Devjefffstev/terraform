@@ -8,11 +8,14 @@ on:
                 required: false
                 default: 'info'
                 type: string  
-    push:
+    # push:
+    #     branches:
+    #         - main
+    #     paths:
+    #         - modules/**
+    pull_request:
         branches:
             - main
-        paths:
-            - modules/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +103,7 @@ jobs:
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    if: needs.find-changes.outputs.changed-modules != '[]' && github.event_name == 'pull_request' && github.base_ref == 'main'
     needs: find-changes
     strategy:
       matrix:
