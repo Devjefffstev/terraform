@@ -9,24 +9,35 @@ on:
                 type: string  
     push:
 
+env:
+  PATH_PREFIX: modules
+
 jobs: 
     folder-change-detection:
         name: Detect changes in how-to guides folder
         runs-on: ubuntu-latest
         outputs:
-            changed: ${{ steps.check_changes.outputs.changed }}
+            changed-modules: ${{ steps.changed-modules.outputs.result }}
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Check for changes in how-to guides folder
-              id: check_changes
+            - name: Get changed files
+              id: changed-files
+              uses: tj-actions/changed-files@v39
+              with:
+                files_ignore: '.github/workflows/**'        
+            - name: Get changed modules
+              id: changed-modules
               run: |
-                if git diff --name-only HEAD~1 HEAD | grep -q '^howtouse/'; then
-                  echo "Changes detected in how-to guides folder."
-                  echo "changed=true" >> $GITHUB_OUTPUT
-                else
-                  echo "No changes detected in how-to guides folder."
-                  echo "changed=false" >> $GITHUB_OUTPUT
-                fi
+                CHANGED_FILES="${{ steps.changed-files.outputs.all_modified_files }}"
+                MODULES=$(node .github/scripts/detect-changed-modules.js "$CHANGED_FILES" "$PATH_PREFIX")
+                echo "result=$MODULES" >> $GITHUB_OUTPUT
+
+    validate-output:
+        runs-on: ubuntu-latest
+        needs: folder-change-detection
+        steps:
+         - run: |
+             echo "Changed modules: ${{ needs.folder-change-detection.outputs.changed-modules }}"
     
