@@ -10,7 +10,7 @@ on:
     push:
 
 env:
-  PATH_PREFIX: howotouse
+  PATH_PREFIX: howtouse
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs: 
