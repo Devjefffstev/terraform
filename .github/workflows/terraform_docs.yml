@@ -124,8 +124,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
       - name: Render terraform docs and push changes back to PR
         uses: terraform-docs/gh-actions@v1
         with:
