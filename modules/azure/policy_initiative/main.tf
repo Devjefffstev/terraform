@@ -212,7 +212,6 @@ resource "azurerm_resource_group_policy_exemption" "rg_exemptions" {
     azurerm_management_group_policy_assignment.policy_assignment[0].id) : (
     azurerm_subscription_policy_assignment.policy_assignment[0].id
   )
-
   expires_on                      = each.value.expires_on
   policy_definition_reference_ids = each.value.policy_definition_reference_ids
   metadata                        = each.value.metadata

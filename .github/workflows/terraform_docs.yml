@@ -37,12 +37,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
       - name: Get commit info
         id: commit-info
         run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')
-          COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')
+          # Get the actual commit message from the PR branch, not the merge commit
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Get the last non-merge commit from the PR
+            COMMIT_MESSAGE=$(git log --no-merges -1 --pretty=format:'%s' origin/${{ github.head_ref }})
+            COMMIT_AUTHOR=$(git log --no-merges -1 --pretty=format:'%an' origin/${{ github.head_ref }})
+          else
+            COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')
+            COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')
+          fi
           echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
           echo "author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
           echo "Commit message: $COMMIT_MESSAGE"
