@@ -8,11 +8,14 @@ on:
                 required: false
                 default: 'info'
                 type: string  
-    push:
+    # push:
+    #     branches:
+    #         - main
+    #     paths:
+    #         - modules/**
+    pull_request:
         branches:
             - main
-        paths:
-            - modules/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -23,6 +26,7 @@ permissions:
   contents: write
 
 jobs:
+
   get-commit-info:
     name: Get commit information
     runs-on: ubuntu-latest
@@ -47,10 +51,10 @@ jobs:
   find-changes:
     name: Find in modules folder
     runs-on: ubuntu-latest
-    needs: get-commit-info
+    needs: get-commit-info    
     outputs:
       changed-modules: ${{ steps.changed-modules.outputs.result }}
-      commit-message: ${{ needs.get-commit-info.outputs.commit-message }}
+      commit-message: ${{ needs.get-commit-info.outputs.commit-message }}      
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,12 +99,15 @@ jobs:
      - run: |
          echo "Changed modules: ${{ needs.find-changes.outputs.changed-modules }}"
          echo "Commit message: ${{ needs.find-changes.outputs.commit-message }}"
+     - run: |
+         echo "Changed modules: ${{ needs.find-changes.outputs.changed-modules }}"
+         echo "Commit message: ${{ needs.find-changes.outputs.commit-message }}"
 
 
   update-readme:
     name: Update README for changed modules
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.changed-modules != '[]' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    if: needs.find-changes.outputs.changed-modules != '[]' && github.event_name == 'pull_request' && github.base_ref == 'main'
     needs: find-changes
     strategy:
       matrix:
