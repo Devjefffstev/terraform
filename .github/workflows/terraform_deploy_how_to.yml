@@ -10,7 +10,8 @@ on:
     push:
 
 env:
-  PATH_PREFIX: modules
+  PATH_PREFIX: howotouse
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs: 
     folder-change-detection:

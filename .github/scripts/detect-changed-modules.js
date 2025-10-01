@@ -13,15 +13,16 @@ const args = process.argv.slice(2);
 const paths = args[0] || '';
 const prefix_path = args[1] || process.env.PATH_PREFIX || 'modules';
 
-console.log(`prefix_path: ${prefix_path}`);
-console.log(`Paths: ${paths}`);
+// Use stderr for debugging so it doesn't interfere with GitHub Actions output
+console.error(`prefix_path: ${prefix_path}`);
+console.error(`Paths: ${paths}`);
 
 // Regex to match modules with provider/module pattern
-const regex = /${prefix_path}\/([^/]+\/[^/]+)/g;
+const regex = new RegExp(`${prefix_path}\\/([^/]+\\/[^/]+)`, 'g');
 const matches = paths.match(regex);
 
-console.log(`regex: ${regex}`);
-console.log(`Found matches: ${matches}`);
+console.error(`regex: ${regex}`);
+console.error(`Found matches: ${matches}`);
 
 if (!matches) {
     console.log('[]');
@@ -35,7 +36,7 @@ const moduleNames = matches.map(match => {
 
 // Remove duplicates and return the unique module names
 const uniqueModuleNames = Array.from(new Set(moduleNames));
-console.log(uniqueModuleNames);
+console.error(uniqueModuleNames);
 
-// Output as JSON for GitHub Actions
+// Output as JSON for GitHub Actions (only this goes to stdout)
 console.log(JSON.stringify(uniqueModuleNames));
