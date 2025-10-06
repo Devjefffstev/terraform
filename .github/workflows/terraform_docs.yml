@@ -139,7 +139,12 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest
-    environment: general      
+    environment: general    
+    env:
+        TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}  
+        TF_VAR_client_id: ${{ vars.AZURE_CLIENT_ID }}
+        TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
     if: needs.find-changes.outputs.changed-modules != '[]'
     needs: find-changes
     strategy:
