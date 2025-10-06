@@ -3,7 +3,6 @@ key_vault_name              = "examplekeyvault"
 location                    = "eastus2"
 resource_group_name         = "example-resource-group"
 enabled_for_disk_encryption = false
-tenant_id                   = "14c7ef87-1de0-4041-bef5-c65abcdbeb0b"
 soft_delete_retention_days  = 7
 purge_protection_enabled    = false
 sku_name                    = "standard"

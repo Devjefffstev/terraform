@@ -1,8 +1,5 @@
 locals {
+  role_definition_resource_substring = "/providers/Microsoft.Authorization/roleDefinitions"
 
-  access_policy = [
-    for access_policy in var.access_policy : merge(access_policy, {
-      tenant_id = var.tenant_id
-    })
-  ]
+
 }
