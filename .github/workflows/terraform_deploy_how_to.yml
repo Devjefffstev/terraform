@@ -40,6 +40,7 @@ jobs:
         needs: folder-change-detection
         steps:
          - run: |
+             tree -L 3
              echo "Changed modules: ${{ needs.folder-change-detection.outputs.changed-modules }}"
     
     terraform-plan:
@@ -53,7 +54,7 @@ jobs:
         uses: Devjefffstev/GitHub/.github/workflows/terraform_plan.yml@tf_rs
         with: &env_vars
             # use_github_token: true
-            tf_working_directory: ${{ needs.folder-change-detection.outputs.changed-modules }}
+            tf_working_directory: ${{ fromJson(needs.folder-change-detection.outputs.changed-modules) }}
             environment: general
             region: eastus2
         secrets: inherit
