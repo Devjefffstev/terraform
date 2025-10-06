@@ -139,6 +139,7 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest
+    environment: general      
     if: needs.find-changes.outputs.changed-modules != '[]'
     needs: find-changes
     strategy:
