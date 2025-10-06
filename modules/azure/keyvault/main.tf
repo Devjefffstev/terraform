@@ -11,10 +11,21 @@ resource "azurerm_key_vault" "this" {
 }
 
 resource "azurerm_key_vault_secret" "this" {
-  for_each     = var.keyvault_objects
+  for_each     = local.key_vault_secrets
   name         = each.key
   value        = each.value.value
   key_vault_id = azurerm_key_vault.this.id
+}
+
+resource "azurerm_key_vault_certificate" "this" {
+for_each = local.key_vault_certificates
+  name         = each.key
+  key_vault_id = azurerm_key_vault.this.id
+
+  certificate {
+    contents = filebase64(each.value.certificate_data)
+    password = each.value.password
+  }
 }
 
 resource "azurerm_role_assignment" "this" {

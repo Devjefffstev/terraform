@@ -88,14 +88,32 @@ variable "rbac_authorization_enabled" {
 }
 
 variable "network_acls" {
-  description = "(Optional) A network_acls block as defined below."
   type = object({
-    bypass                     = string                     # (Required) Specifies which traffic can bypass the network rules. Possible values are AzureServices and None.
-    default_action             = string                     # (Required) The Default Action to use when no rules match from ip_rules / virtual_network_subnet_ids. Possible values are Allow and Deny.
-    ip_rules                   = optional(list(string), []) # (Optional) One or more IP Addresses, or CIDR Blocks which should be able to access the Key Vault.
-    virtual_network_subnet_ids = optional(list(string), []) # (Optional) One or more Subnet IDs which should be able to access this Key Vault.
+    bypass                     = optional(string, "None")
+    default_action             = optional(string, "Deny")
+    ip_rules                   = optional(list(string), [])
+    virtual_network_subnet_ids = optional(list(string), [])
   })
-  default = null
+  default     = {}
+  description = <<DESCRIPTION
+The network ACL configuration for the Key Vault.
+If not specified then the Key Vault will be created with a firewall that blocks access.
+Specify `null` to create the Key Vault with no firewall.
+
+- `bypass` - (Optional) Should Azure Services bypass the ACL. Possible values are `AzureServices` and `None`. Defaults to `None`.
+- `default_action` - (Optional) The default action when no rule matches. Possible values are `Allow` and `Deny`. Defaults to `Deny`.
+- `ip_rules` - (Optional) A list of IP rules in CIDR format. Defaults to `[]`.
+- `virtual_network_subnet_ids` - (Optional) When using with Service Endpoints, a list of subnet IDs to associate with the Key Vault. Defaults to `[]`.
+DESCRIPTION
+
+  validation {
+    condition     = var.network_acls == null ? true : contains(["AzureServices", "None"], var.network_acls.bypass)
+    error_message = "The bypass value must be either `AzureServices` or `None`."
+  }
+  validation {
+    condition     = var.network_acls == null ? true : contains(["Allow", "Deny"], var.network_acls.default_action)
+    error_message = "The default_action value must be either `Allow` or `Deny`."
+  }
 }
 
 variable "public_network_access_enabled" {
@@ -190,9 +208,21 @@ DESCRIPTION
 
 }
 
-variable "keyvault_objects" {
+variable "key_vault_objects" {
   type = map(object({
     ## fill this to create a secret
     value = optional(string)
+    ## Fill this to import a certificate
+    certificate_data = optional(string)
+    password         = optional(string)    
   }))
+  default     = {}
+  description = <<DESCRIPTION
+A map of key vault objects to create. The map key is the name of the object.
+DESCRIPTION
+validation {
+  error_message = "Certificate data must be provided if password is set."
+  condition     = anytrue([for k,v in var.key_vault_objects : (v.value == null && (v.certificate_data != null && v.password != null)) || (v.certificate_data == null && v.password == null)]) 
+}
+
 }
