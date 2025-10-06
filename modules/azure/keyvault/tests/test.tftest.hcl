@@ -1,11 +1,4 @@
-# run "setup" {
-#   command = plan
 
-#   module {
-#     source = "./"
-#   }
-# }
-# mock_provider "azurerm" {  }
 run "check_name" {
 
   command = plan
