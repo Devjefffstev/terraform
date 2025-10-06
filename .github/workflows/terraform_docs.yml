@@ -8,6 +8,12 @@ on:
                 required: false
                 default: 'info'
                 type: string  
+            terraform-test-verbose:
+                description: 'Terraform test verbose mode (true, false)'
+                required: false
+                default: false
+                type: boolean
+                
     # push:
     #     branches:
     #         - main
@@ -164,3 +170,8 @@ jobs:
       - run: terraform fmt -diff -check
       - run: terraform validate
       - run: terraform test 
+      - name: Terraform Test with Verbose Logging
+        run: terraform test -verbose
+        if: ${{ github.event.inputs.terraform-test-verbose == 'true' }}
+        
+      
