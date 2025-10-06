@@ -157,3 +157,4 @@ jobs:
       - run: terraform init
       - run: terraform fmt -diff -check
       - run: terraform validate
+      - run: terraform test 
