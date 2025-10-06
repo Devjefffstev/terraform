@@ -8,7 +8,9 @@ mock_provider "azurerm" {
   }
 }
 run "check_name" {
-
+providers = {
+    azurerm = azurerm.fake
+}
   command = plan
 
   variables {
@@ -29,6 +31,9 @@ run "check_name" {
 }
 
 run "check_location" {
+  providers = {
+    azurerm = azurerm.fake
+  }
   command = plan
 
   variables {
