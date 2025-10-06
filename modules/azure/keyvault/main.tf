@@ -18,7 +18,7 @@ resource "azurerm_key_vault_secret" "this" {
 }
 
 resource "azurerm_key_vault_certificate" "this" {
-for_each = local.key_vault_certificates
+  for_each     = local.key_vault_certificates
   name         = each.key
   key_vault_id = azurerm_key_vault.this.id
 

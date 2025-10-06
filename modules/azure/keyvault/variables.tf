@@ -214,15 +214,15 @@ variable "key_vault_objects" {
     value = optional(string)
     ## Fill this to import a certificate
     certificate_data = optional(string)
-    password         = optional(string)    
+    password         = optional(string)
   }))
   default     = {}
   description = <<DESCRIPTION
 A map of key vault objects to create. The map key is the name of the object.
 DESCRIPTION
-validation {
-  error_message = "Certificate data must be provided if password is set."
-  condition     = anytrue([for k,v in var.key_vault_objects : (v.value == null && (v.certificate_data != null && v.password != null)) || (v.certificate_data == null && v.password == null)]) 
-}
+  validation {
+    error_message = "Certificate data must be provided if password is set."
+    condition     = anytrue([for k, v in var.key_vault_objects : (v.value == null && (v.certificate_data != null && v.password != null)) || (v.certificate_data == null && v.password == null)])
+  }
 
 }
