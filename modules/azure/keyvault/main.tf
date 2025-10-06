@@ -1,4 +1,4 @@
-resource "azurerm_key_vault" "main" {
+resource "azurerm_key_vault" "this" {
   name                        = var.key_vault_name
   location                    = var.location
   resource_group_name         = var.resource_group_name
@@ -7,25 +7,50 @@ resource "azurerm_key_vault" "main" {
   soft_delete_retention_days  = var.soft_delete_retention_days
   purge_protection_enabled    = var.purge_protection_enabled
   sku_name                    = var.sku_name
-  enable_rbac_authorization   = try(var.enable_rbac_authorization, null)
-
-  dynamic "access_policy" {
-    for_each = local.access_policy
-    content {
-      tenant_id           = access_policy.value["tenant_id"]
-      object_id           = access_policy.value["object_id"]
-      key_permissions     = access_policy.value["key_permissions"]
-      secret_permissions  = access_policy.value["secret_permissions"]
-      storage_permissions = access_policy.value["storage_permissions"]
-    }
-
-  }
 
 }
 
-resource "azurerm_key_vault_secret" "main" {
-  for_each     = var.keyvault_objects
+resource "azurerm_key_vault_secret" "this" {
+  for_each     = local.key_vault_secrets
   name         = each.key
   value        = each.value.value
-  key_vault_id = azurerm_key_vault.main.id
+  key_vault_id = azurerm_key_vault.this.id
+}
+
+resource "azurerm_key_vault_certificate" "this" {
+  for_each     = local.key_vault_certificates
+  name         = each.key
+  key_vault_id = azurerm_key_vault.this.id
+
+  certificate {
+    contents = filebase64(each.value.certificate_data)
+    password = each.value.password
+  }
+}
+
+resource "azurerm_role_assignment" "this" {
+  for_each = var.role_assignments
+
+  principal_id                           = each.value.principal_id
+  scope                                  = azurerm_key_vault.this.id
+  condition                              = each.value.condition
+  condition_version                      = each.value.condition_version
+  delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id
+  principal_type                         = each.value.principal_type
+  role_definition_id                     = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? each.value.role_definition_id_or_name : null
+  role_definition_name                   = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? null : each.value.role_definition_id_or_name
+  skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
+}
+
+resource "azurerm_key_vault_access_policy" "this" {
+  for_each = var.legacy_access_policies
+
+  key_vault_id            = azurerm_key_vault.this.id
+  object_id               = each.value.object_id
+  tenant_id               = var.tenant_id
+  application_id          = each.value.application_id
+  certificate_permissions = each.value.certificate_permissions
+  key_permissions         = each.value.key_permissions
+  secret_permissions      = each.value.secret_permissions
+  storage_permissions     = each.value.storage_permissions
 }

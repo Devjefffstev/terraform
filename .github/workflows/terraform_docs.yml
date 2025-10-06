@@ -8,6 +8,12 @@ on:
                 required: false
                 default: 'info'
                 type: string  
+            terraform-test-verbose:
+                description: 'Terraform test verbose mode (true, false)'
+                required: false
+                default: false
+                type: boolean
+                
     # push:
     #     branches:
     #         - main
@@ -139,6 +145,12 @@ jobs:
   module-review:
     name: Individual module review
     runs-on: ubuntu-latest
+    environment: general    
+    env:
+        TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}  
+        TF_VAR_client_id: ${{ vars.AZURE_CLIENT_ID }}
+        TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
     if: needs.find-changes.outputs.changed-modules != '[]'
     needs: find-changes
     strategy:
@@ -157,3 +169,9 @@ jobs:
       - run: terraform init
       - run: terraform fmt -diff -check
       - run: terraform validate
+      - run: terraform test 
+      - name: Terraform Test with Verbose Logging
+        run: terraform test -verbose
+        if: ${{ github.event.inputs.terraform-test-verbose == 'true' }}
+        
+      
