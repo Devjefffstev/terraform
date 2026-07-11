@@ -1,0 +1,31 @@
+name: Terraform Pipeline
+
+on:
+  pull_request:
+    branches: main
+
+permissions:
+  actions: write
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    uses: .github/workflows/terraform-test.yml@main
+    secrets: inherit
+    with:
+      tf_working_directory: ./terraform
+
+  plan:
+    needs: test
+    uses: .github/workflows/terraform-plan.yml@main
+    secrets: 
+      AUTO_TFVARS_HCL: |
+        # Add your custom variables here in HCL format
+        # Example:
+        # custom_secret = "${{ secrets.MY_SECRET }}"
+        # custom_variable = "${{ vars.MY_VARIABLE }}"
+    with:
+      environment: dev
+      region: eastus
+      tf_working_directory: ./terraform

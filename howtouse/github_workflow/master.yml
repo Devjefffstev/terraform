@@ -1,0 +1,48 @@
+name: Terraform Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+
+permissions:
+  actions: write
+  contents: read
+  id-token: write
+
+jobs:
+  plan-dev:
+    uses: .github/workflows/terraform-plan.yml@v0.1.0
+    secrets: inherit
+    with:
+      environment: dev
+      region: eastus
+      tf_working_directory: ./terraform
+
+  plan-prd:
+    uses: .github/workflows/terraform-plan.yml@v0.1.0
+    secrets: inherit
+    with:
+      environment: prd
+      region: eastus
+      tf_working_directory: ./terraform
+
+  apply-dev:
+    needs: plan-dev
+    uses: .github/workflows/terraform-apply.yml@v0.1.0
+    secrets: inherit
+    with:
+      environment: dev
+      region: eastus
+      tf_working_directory: ./terraform
+
+  apply-prd:
+    needs: [plan-prd, apply-dev]
+    uses: .github/workflows/terraform-apply.yml@v0.1.0
+    secrets: inherit
+    with:
+      environment: prd
+      region: eastus
+      tf_working_directory: ./terraform

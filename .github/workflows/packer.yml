@@ -1,0 +1,117 @@
+name: Packer - Build Azure Image
+
+on:
+  push:
+    branches: [dev]
+  # pull_request:
+  #   branches: [dev]
+  workflow_dispatch:
+    inputs:
+      log-level:
+        description: 'Log level (trace, debug, info, warn, error, fatal, panic)'
+        required: false
+        default: 'info'
+        type: string  
+
+jobs:
+  packer-build:
+    runs-on: ubuntu-latest
+    environment: dev   # binds to GitHub environment "sandbox"
+
+    permissions:
+      id-token: write   # Needed for OIDC login to Azure
+      contents: read
+
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      PKR_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+    defaults:
+      run:
+        working-directory: packer
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Packer manually
+        run: |
+          PACKER_VERSION="1.14.1"
+          curl -L -o packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+          unzip packer.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+
+      - name: Verify and install jq
+        run: |
+          if ! command -v jq &> /dev/null
+          then
+              echo "jq could not be found, installing..."
+              sudo apt-get update
+              sudo apt-get install -y jq
+          else
+              echo "jq is already installed"
+          fi
+          jq --version
+
+      - name: Verify Azure Compute Gallery
+        run: |
+            ## Read gallery 
+            GALLERY_NAME="$(jq -r '.gallery_name' ../tfvars/dev/dev-eastus.tfvars.json)"
+            
+            ## Read resource group
+            RESOURCE_GROUP="$(jq -r '.resource_group_name' ../tfvars/dev/dev-eastus.tfvars.json)"
+
+            echo "Gallery Name: ${GALLERY_NAME}"
+            echo "Resource Group: ${RESOURCE_GROUP}"
+
+            RESULT=$(az sig wait --created --gallery-name "${GALLERY_NAME}" --resource-group "${RESOURCE_GROUP}" --subscription ${{ env.AZURE_SUBSCRIPTION_ID }} --timeout 1800)
+
+            echo $RESULT
+            # Check the result
+            if [ "$RESULT" == "{}" ]; then
+              echo "Timeout reached, and the image version "${GALLERY_NAME}" does not exist."
+              exit 1
+            elif [ $? -eq 0 ]; then
+              echo "${GALLERY_NAME} has been successfully created!"
+            else
+              echo "${GALLERY_NAME} already exist!"
+            fi
+            
+
+      # - name: Copy variables from Terraform 
+      #   run: |
+      #     cp ../tfvars/dev/dev-eastus.tfvars.json ./vars.auto.pkrvars.hcl
+      #     echo "Packer variables copied from Terraform tfvars file."
+
+      # - name: Packer initialize
+      #   run: packer init .
+
+      # - name: Validate Packer template
+      #   run: packer validate .
+
+      - name: Build Azure Image with Packer
+        run: |
+          ## Read gallery 
+            GALLERY_NAME="$(jq -r '.gallery_name' ../tfvars/dev/dev-eastus.tfvars.json)"
+            
+            ## Read resource group
+            RESOURCE_GROUP="$(jq -r '.resource_group_name' ../tfvars/dev/dev-eastus.tfvars.json)"
+
+            echo "Gallery Name: ${GALLERY_NAME}"
+            echo "Resource Group: ${RESOURCE_GROUP}"
+
+            packer init -var=resource_group_name="${RESOURCE_GROUP}" -var=gallery_name="${GALLERY_NAME}" .
+
+            packer validate -var=resource_group_name="${RESOURCE_GROUP}" -var=gallery_name="${GALLERY_NAME}" .
+            
+            packer build -var=resource_group_name="${RESOURCE_GROUP}" -var=gallery_name="${GALLERY_NAME}" .
