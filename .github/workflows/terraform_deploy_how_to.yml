@@ -1,0 +1,60 @@
+name: Terraform Workflow to deploy how-to guides
+on: 
+    workflow_dispatch:
+        inputs:
+            log-level:
+                description: 'Log level (trace, debug, info, warn, error, fatal, panic)'
+                required: false
+                default: 'info'
+                type: string  
+    push:
+
+env:
+  PATH_PREFIX: howtouse
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs: 
+    folder-change-detection:
+        name: Detect changes in how-to guides folder
+        runs-on: ubuntu-latest
+        outputs:
+            changed-modules: ${{ steps.changed-modules.outputs.result }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Get changed files
+              id: changed-files
+              uses: tj-actions/changed-files@v39
+              with:
+                files_ignore: '.github/workflows/**'        
+            - name: Get changed modules
+              id: changed-modules
+              run: |
+                CHANGED_FILES="${{ steps.changed-files.outputs.all_modified_files }}"
+                MODULES=$(node .github/scripts/detect-changed-modules.js "$CHANGED_FILES" "$PATH_PREFIX")
+                echo "result=$MODULES" >> $GITHUB_OUTPUT
+
+    validate-output:
+        runs-on: ubuntu-latest
+        needs: folder-change-detection
+        steps:
+         - run: |
+             tree -L 3
+             echo "Changed modules: ${{ needs.folder-change-detection.outputs.changed-modules }}"
+    
+    terraform-plan:
+        name: Run Terraform Plan for changed modules HowToUse
+        needs: folder-change-detection
+        if: needs.folder-change-detection.outputs.changed-modules != '[]'
+        strategy:
+          fail-fast: false
+          matrix:
+            module: ${{ fromJson(needs.folder-change-detection.outputs.changed-modules) }}
+        uses: Devjefffstev/GitHub/.github/workflows/terraform_plan.yml@tf_rs
+        with: &env_vars
+            # use_github_token: true
+            tf_working_directory: ${{ fromJson(needs.folder-change-detection.outputs.changed-modules) }}
+            environment: general
+            region: eastus2
+        secrets: inherit

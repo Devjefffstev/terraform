@@ -10,7 +10,7 @@ crash.log
 crash.*.log
 *tfplan*
 */.terraform.lock.hcl
-*lock.hcl
+# *lock.hcl
 *.pem
 
 
